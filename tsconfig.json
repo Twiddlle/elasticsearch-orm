@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "lib": [
+      "es2015",
+      "es2017",
+      "dom"
+    ],
+    "module": "commonjs",
+    "target": "es5",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "incremental": true
+  },
+  "include": [
+    "./index.ts"
+  ]
+}

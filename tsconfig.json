@@ -2,13 +2,8 @@
   "compilerOptions": {
     "sourceMap": true,
     "noImplicitAny": false,
-    "lib": [
-      "es2015",
-      "es2017",
-      "dom"
-    ],
     "module": "commonjs",
-    "target": "es5",
+    "target": "ES6",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,

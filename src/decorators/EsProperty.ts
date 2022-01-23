@@ -1,8 +1,9 @@
-import { EsType } from './EsTypes';
+import { EsType } from '../types/Es.type';
 import 'reflect-metadata';
+import { EsFieldPropertyOptions } from '../types/EsFieldPropertyOptions.interface';
 
 export interface EsPropertyOptions {
-  analyzer?: Record<string, unknown>;
+  fieldOptions?: EsFieldPropertyOptions;
   name?: string;
 }
 
@@ -14,7 +15,7 @@ export function EsProperty(options: EsPropertyTypedOptions): PropertyDecorator;
 
 export function EsProperty(
   type: EsType,
-  options?: EsPropertyTypedOptions,
+  options?: EsPropertyOptions,
 ): PropertyDecorator;
 
 export function EsProperty(
@@ -22,22 +23,22 @@ export function EsProperty(
   option2?: EsPropertyOptions,
 ): PropertyDecorator {
   return (target, name) => {
+    const defaultOptions: Partial<EsPropertyTypedOptions> = {
+      name: name as string,
+    };
     let propertyOptions: EsPropertyTypedOptions;
 
-    if (option1 instanceof Object) {
+    if (typeof option1 === 'string') {
+      propertyOptions = Object.assign({ type: option1 }, option2 || {});
+    } else if (option1 instanceof Object) {
       propertyOptions = option1;
-    } else if (option2 instanceof Object) {
-      propertyOptions = Object.assign({ type: option1 }, option2);
     } else {
-      throw new Error('Not valid elastic property options');
+      throw new Error(
+        `Not valid elastic property options for ${name as string}`,
+      );
     }
 
-    Object.assign(
-      {
-        name: name,
-      },
-      propertyOptions,
-    );
+    propertyOptions = Object.assign(defaultOptions, propertyOptions);
 
     const properties = Reflect.getMetadata(EsProperty.name, target) || [];
     properties.push(propertyOptions);

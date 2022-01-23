@@ -37,5 +37,21 @@
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": ".",
+    "testEnvironment": "node",
+    "testRegex": "\\.(test|spec)\\.ts$",
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "src/*.ts"
+    ]
   }
 }

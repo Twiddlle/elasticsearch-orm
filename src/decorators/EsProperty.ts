@@ -5,6 +5,7 @@ import { EsFieldPropertyOptions } from '../types/EsFieldPropertyOptions.interfac
 export interface EsPropertyOptions {
   fieldOptions?: EsFieldPropertyOptions;
   name?: string;
+  isId?: boolean;
 }
 
 export interface EsPropertyTypedOptions extends EsPropertyOptions {

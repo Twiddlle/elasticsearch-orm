@@ -25,7 +25,7 @@ export class EntityTransformer {
     return entity;
   }
 
-  private getMeta(entity: unknown) {
+  private getMeta(entity) {
     const metaData = this.metaLoader.getReflectMetaData(entity.constructor);
     if (!metaData || !metaData.entity || !metaData.props) {
       throw new Error(

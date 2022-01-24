@@ -1,10 +1,14 @@
-import {EsEntity} from "../../src/decorators/EsEntity";
-import {EsProperty} from "../../src/decorators/EsProperty";
+import { EsEntity } from '../../src/decorators/EsEntity';
+import { EsProperty } from '../../src/decorators/EsProperty';
+import { EsId } from '../../src/decorators/EsId';
 
 @EsEntity('test_index_main', {
-  alisases: ['test_alias_read', 'test_alias_write'],
+  aliases: ['test_alias_read', 'test_alias_write'],
 })
 export class TestingClass {
+  @EsId()
+  public id: string;
+
   @EsProperty('integer', {
     name: 'Foo',
     fieldOptions: {

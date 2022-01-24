@@ -1,5 +1,5 @@
 export interface EsClassTypeOptionsInterface {
-  alisases?: string[];
+  aliases?: string[];
   name?: string;
 }
 

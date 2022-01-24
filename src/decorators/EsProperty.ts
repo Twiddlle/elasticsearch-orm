@@ -11,6 +11,10 @@ export interface EsPropertyTypedOptions extends EsPropertyOptions {
   type: EsType;
 }
 
+export interface EsPropertyFullOptions extends EsPropertyTypedOptions {
+  entityPropName: string;
+}
+
 export function EsProperty(options: EsPropertyTypedOptions): PropertyDecorator;
 
 export function EsProperty(
@@ -23,22 +27,26 @@ export function EsProperty(
   option2?: EsPropertyOptions,
 ): PropertyDecorator {
   return (target, name) => {
-    const defaultOptions: Partial<EsPropertyTypedOptions> = {
+    const defaultOptions: EsPropertyFullOptions = {
       name: name as string,
+      entityPropName: name as string,
+      type: 'unknown',
     };
-    let propertyOptions: EsPropertyTypedOptions;
+    let propertyOptions: EsPropertyFullOptions;
 
     if (typeof option1 === 'string') {
-      propertyOptions = Object.assign({ type: option1 }, option2 || {});
+      propertyOptions = Object.assign(
+        defaultOptions,
+        { type: option1 },
+        option2 || {},
+      );
     } else if (option1 instanceof Object) {
-      propertyOptions = option1;
+      propertyOptions = Object.assign(defaultOptions, option1);
     } else {
       throw new Error(
         `Not valid elastic property options for ${name as string}`,
       );
     }
-
-    propertyOptions = Object.assign(defaultOptions, propertyOptions);
 
     const properties = Reflect.getMetadata(EsProperty.name, target) || [];
     properties.push(propertyOptions);

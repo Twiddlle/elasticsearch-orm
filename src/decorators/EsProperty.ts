@@ -1,26 +1,11 @@
 import { EsType } from '../types/Es.type';
 import 'reflect-metadata';
 import { EsFieldPropertyOptions } from '../types/EsFieldPropertyOptions.interface';
-
-export type idGenerator = (entity) => string;
-
-export interface EsPropertyOptions {
-  fieldOptions?: EsFieldPropertyOptions;
-  name?: string;
-  isId?: boolean;
-}
-
-export interface EsIdOptions extends EsPropertyOptions {
-  generator?: idGenerator;
-}
-
-export interface EsPropertyTypedOptions extends EsPropertyOptions {
-  type: EsType;
-}
-
-export interface EsPropertyFullOptions extends EsPropertyTypedOptions {
-  entityPropName: string;
-}
+import {
+  EsPropertyFullOptions,
+  EsPropertyOptions,
+  EsPropertyTypedOptions,
+} from '../types/EsPropertyOptions.intarface';
 
 export function EsProperty(options: EsPropertyTypedOptions): PropertyDecorator;
 
@@ -38,6 +23,7 @@ export function EsProperty(
       name: name as string,
       entityPropName: name as string,
       type: 'unknown',
+      fieldOptions: {},
     };
     let propertyOptions: EsPropertyFullOptions;
 

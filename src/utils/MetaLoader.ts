@@ -1,16 +1,26 @@
 import 'reflect-metadata';
-import {
-  EsIdOptions,
-  EsProperty,
-  EsPropertyFullOptions,
-} from '../decorators/EsProperty';
+import { EsProperty } from '../decorators/EsProperty';
 import { ClassType } from '../types/Class.type';
 import { EsEntity } from '../decorators/EsEntity';
 import { EsMetaDataInterface } from '../types/EsMetaData.interface';
 import { defaultIdGenerator } from '../entity/defaultIdGenerator';
+import {
+  EsIdOptions,
+  EsPropertyFullOptions,
+} from '../types/EsPropertyOptions.intarface';
 
 export class MetaLoader {
+  private static instance: MetaLoader;
+
   private cache = new Map<ClassType<unknown>, EsMetaDataInterface>();
+
+  public static getInstance() {
+    if (!MetaLoader.instance) {
+      MetaLoader.instance = new MetaLoader();
+    }
+
+    return MetaLoader.instance;
+  }
 
   public getReflectMetaData<T = unknown>(
     Entity: ClassType<T>,

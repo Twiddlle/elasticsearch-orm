@@ -1,7 +1,7 @@
-import { MetaLoader } from '../../../src/utils/MetaLoader';
 import { TestingClass } from '../../fixtures/TestingClass';
 import { TestingClass as TestingClass2 } from '../../fixtures/TestingClass2';
 import { EntityTransformer } from '../../../src/utils/EntityTransformer';
+import { FactoryProvider } from '../../../src/factory/Factory.provider';
 
 describe('entity transformer', () => {
   let entityTransformer: EntityTransformer;
@@ -18,7 +18,7 @@ describe('entity transformer', () => {
   testingClass2.geoPoint2 = [14, 15];
 
   beforeAll(() => {
-    entityTransformer = new EntityTransformer(new MetaLoader());
+    entityTransformer = FactoryProvider.makeEntityTransformer();
   });
 
   it('should transform entity', () => {

@@ -1,5 +1,8 @@
 import { ESClassFullTypeOptionsInterface } from './EsClassTypeOptions.interface';
-import { EsPropertyFullOptions, idGenerator } from '../decorators/EsProperty';
+import {
+  EsPropertyFullOptions,
+  idGenerator,
+} from './EsPropertyOptions.intarface';
 
 export interface EsMetaDataInterface {
   entity: ESClassFullTypeOptionsInterface;

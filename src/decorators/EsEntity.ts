@@ -19,6 +19,13 @@ export function EsEntity(
   return (target) => {
     const defaultOptions: Partial<ESClassFullTypeOptionsInterface> = {
       name: target.name,
+      settings: {
+        number_of_replicas: 0,
+        number_of_shards: 1,
+      },
+      mapping: {
+        dynamic: 'strict',
+      },
     };
     let entityOptions: ESClassFullTypeOptionsInterface;
 

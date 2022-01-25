@@ -10,9 +10,9 @@ export interface EsRepositoryInterface<Entity = unknown> {
     requestBulkOptions: EsRequestBulkOptions,
   ): Promise<Entity[]>;
 
-  index(entity: Entity): Promise<Entity>;
+  update(entity: Entity): Promise<Entity>;
 
-  indexMultiple(
+  updateMultiple(
     entities: Entity[],
     requestBulkOptions: EsRequestBulkOptions,
   ): Promise<Entity[]>;

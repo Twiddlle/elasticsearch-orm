@@ -3,17 +3,14 @@ import {
   EsRequestBulkOptions,
 } from './EsRepository.interface';
 import { Client } from '@elastic/elasticsearch';
-import { EntityTransformer } from '../utils/EntityTransformer';
-import { MetaLoader } from '../utils/MetaLoader';
 import { ClassType } from '../types/Class.type';
+import { FactoryProvider } from '../factory/Factory.provider';
 
 export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
-  private readonly metaLoader = new MetaLoader();
-  private readonly entityTransformer: EntityTransformer;
+  private readonly metaLoader = FactoryProvider.makeMetaLoader();
+  private readonly entityTransformer = FactoryProvider.makeEntityTransformer();
 
-  constructor(private readonly client: Client) {
-    this.entityTransformer = new EntityTransformer(this.metaLoader);
-  }
+  constructor(private readonly client: Client) {}
 
   async create<Entity>(entity: Entity): Promise<Entity> {
     const dbEntity = this.entityTransformer.normalize(entity);
@@ -65,11 +62,11 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve(undefined);
   }
 
-  index(entity: Entity): Promise<Entity> {
+  update(entity: Entity): Promise<Entity> {
     return Promise.resolve(undefined);
   }
 
-  indexMultiple(
+  updateMultiple(
     entities: Entity[],
     requestBulkOptions: EsRequestBulkOptions,
   ): Promise<Entity[]> {

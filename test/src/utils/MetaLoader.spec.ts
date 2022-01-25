@@ -1,12 +1,13 @@
 import { MetaLoader } from '../../../src/utils/MetaLoader';
 import { TestingClass } from '../../fixtures/TestingClass';
 import { TestingClass as TestingClass2 } from '../../fixtures/TestingClass2';
+import { FactoryProvider } from '../../../src/factory/Factory.provider';
 
 describe('meta loader', () => {
   let metaLoader: MetaLoader;
 
   beforeAll(() => {
-    metaLoader = new MetaLoader();
+    metaLoader = FactoryProvider.makeMetaLoader();
   });
 
   it('should load metadata', () => {

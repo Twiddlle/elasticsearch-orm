@@ -4,7 +4,8 @@
   "description": "Elasticsearch object relational mapper.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --forceExit --detectOpenHandles",
+    "test:cov": "jest --forceExit --detectOpenHandles --collectCoverage"
   },
   "repository": {
     "type": "git",
@@ -48,12 +49,13 @@
     ],
     "rootDir": ".",
     "testEnvironment": "node",
-    "testRegex": "\\.(test|spec)\\.ts$",
+    "testRegex": "\\.spec\\.ts$",
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },
+    "coverageDirectory": "../coverage",
     "collectCoverageFrom": [
-      "src/*.ts"
+      "src/**/*.ts"
     ]
   }
 }

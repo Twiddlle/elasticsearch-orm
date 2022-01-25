@@ -24,10 +24,10 @@ describe('entity transformer', () => {
   it('should transform entity', () => {
     const normalizedEntity = entityTransformer.normalize(testingClass1);
     expect(normalizedEntity.id).toBe('25u46fhno');
-    expect(normalizedEntity.Foo).toBe(1);
-    expect(normalizedEntity.bar).toBe(false);
-    expect(normalizedEntity.geoPoint[0]).toBe(12);
-    expect(normalizedEntity.geoPoint[1]).toBe(13);
+    expect(normalizedEntity.data.Foo).toBe(1);
+    expect(normalizedEntity.data.bar).toBe(false);
+    expect(normalizedEntity.data.geoPoint[0]).toBe(12);
+    expect(normalizedEntity.data.geoPoint[1]).toBe(13);
 
     const denormalizedEntity = entityTransformer.denormalize(
       TestingClass,
@@ -44,10 +44,10 @@ describe('entity transformer', () => {
   it('should transform entity of same class name from different file', () => {
     const normalizedEntity = entityTransformer.normalize(testingClass2);
     expect(normalizedEntity.id).toBe('doljgm4');
-    expect(normalizedEntity.Foo_2).toBe(2);
-    expect(normalizedEntity.bar2).toBe(true);
-    expect(normalizedEntity.geoPoint2[0]).toBe(14);
-    expect(normalizedEntity.geoPoint2[1]).toBe(15);
+    expect(normalizedEntity.data.Foo_2).toBe(2);
+    expect(normalizedEntity.data.bar2).toBe(true);
+    expect(normalizedEntity.data.geoPoint2[0]).toBe(14);
+    expect(normalizedEntity.data.geoPoint2[1]).toBe(15);
 
     const denormalizedEntity = entityTransformer.denormalize(
       TestingClass2,

@@ -21,12 +21,26 @@ describe('Es Repository', () => {
       };
     });
 
+    jest.spyOn(client, 'get').mockImplementationOnce(() => {
+      return {
+        abort: () => undefined,
+        body: {
+          _id: '0eL8kTNJNs35P09tBGB3X',
+          _source: {
+            Foo: 123,
+            bar: true,
+            geoPoint: [17, 18],
+          },
+        },
+      };
+    });
+
     const entityToCreate = new TestingClass();
     entityToCreate.foo = 123;
     entityToCreate.bar = true;
     entityToCreate.geoPoint = [17, 18];
     const createdEntity = await repository.create(entityToCreate);
-    expect(createdEntity.id).toHaveLength(21);
+    expect(createdEntity.id).toBe('0eL8kTNJNs35P09tBGB3X');
     expect(createdEntity.foo).toBe(123);
     expect(createdEntity.bar).toBe(true);
     expect(createdEntity.geoPoint).toMatchObject([17, 18]);

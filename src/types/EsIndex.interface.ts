@@ -5,6 +5,7 @@ export interface EsIndexInterface {
   settings?: {
     number_of_shards?: number;
     number_of_replicas?: number;
+    [key: string]: unknown;
   };
   analysis?: Record<string, unknown>;
 }

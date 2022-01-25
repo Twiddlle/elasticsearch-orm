@@ -11,6 +11,13 @@ describe('schema manager spec', () => {
 
   it('should generate index schema', () => {
     const schema = schemaManager.generateIndexSchema(TestingClass);
-    console.log(schema);
+
+    expect(schema.settings.number_of_replicas).toBe(0);
+    expect(schema.settings.number_of_shards).toBe(1);
+    expect(schema.mappings.dynamic).toBe('strict');
+    expect(schema.mappings.properties.Foo.type).toBe('integer');
+    expect(schema.mappings.properties.Foo.boost).toBe(10);
+    expect(schema.mappings.properties.bar.type).toBe('boolean');
+    expect(schema.mappings.properties.geoPoint.type).toBe('geo_point');
   });
 });

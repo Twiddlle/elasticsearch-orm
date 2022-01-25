@@ -1,3 +1,7 @@
+import { EsIndexInterface } from '../types/EsIndex.interface';
+import { EsMappingInterface } from '../types/EsMapping.interface';
+import { ClassType } from '../types/Class.type';
+
 export interface EsRequestBulkOptions {
   throwException?: true;
 }
@@ -24,7 +28,7 @@ export interface EsRepositoryInterface<Entity = unknown> {
     requestBulkOptions: EsRequestBulkOptions,
   ): Promise<Entity[]>;
 
-  delete(id: string[]): Promise<boolean>;
+  delete(entity: Entity): Promise<boolean>;
 
   deleteMultiple(
     entity: Entity,
@@ -37,5 +41,17 @@ export interface EsRepositoryInterface<Entity = unknown> {
 
   find(query): Promise<Entity[]>;
 
-  findById(id: string | number): Promise<Entity>;
+  findById(id: string, Entity: ClassType<Entity>): Promise<Entity>;
+
+  createIndex(
+    Entity: ClassType<Entity>,
+    indexInterface: EsIndexInterface,
+  ): Promise<void>;
+
+  deleteIndex(Entity: ClassType<Entity>): Promise<void>;
+
+  updateMapping(
+    Entity: ClassType<Entity>,
+    mapping: EsMappingInterface,
+  ): Promise<void>;
 }

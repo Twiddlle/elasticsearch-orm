@@ -1,8 +1,13 @@
 import 'reflect-metadata';
-import { EsProperty, EsPropertyFullOptions } from '../decorators/EsProperty';
+import {
+  EsIdOptions,
+  EsProperty,
+  EsPropertyFullOptions,
+} from '../decorators/EsProperty';
 import { ClassType } from '../types/Class.type';
 import { EsEntity } from '../decorators/EsEntity';
 import { EsMetaDataInterface } from '../types/EsMetaData.interface';
+import { defaultIdGenerator } from '../entity/defaultIdGenerator';
 
 export class MetaLoader {
   private cache = new Map<ClassType<unknown>, EsMetaDataInterface>();
@@ -15,18 +20,19 @@ export class MetaLoader {
         EsProperty.name,
         new Entity(),
       ) as EsPropertyFullOptions[];
-      let idPropName: string;
+      let idProp: EsIdOptions;
       for (const prop of props) {
         if (prop.isId) {
-          idPropName = prop.entityPropName;
+          idProp = prop;
           break;
         }
       }
 
-      const meta = {
+      const meta: EsMetaDataInterface = {
         props,
         entity: Reflect.getMetadata(EsEntity.name, Entity),
-        idPropName: idPropName,
+        idPropName: idProp.name,
+        idGenerator: idProp.generator || defaultIdGenerator,
       };
 
       MetaLoader.validateMetaData(Entity.name, meta);

@@ -8,22 +8,21 @@ import { MetaLoader } from '../utils/MetaLoader';
 import { ClassType } from '../types/Class.type';
 
 export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
+  private readonly metaLoader = new MetaLoader();
   private readonly entityTransformer: EntityTransformer;
-  private readonly metaLoader: MetaLoader;
 
-  constructor(private readonly client: Client) {}
+  constructor(private readonly client: Client) {
+    this.entityTransformer = new EntityTransformer(this.metaLoader);
+  }
 
-  async create(entity: Entity): Promise<Entity> {
+  async create<Entity>(entity: Entity): Promise<Entity> {
     const dbEntity = this.entityTransformer.normalize(entity);
-    const dbEntityId = dbEntity[
-      this.metaLoader.getIdPropName(entity.constructor as ClassType<Entity>)
-    ] as undefined | string;
 
     await this.client.create({
       index: this.metaLoader.getIndex(entity.constructor as ClassType<Entity>),
-      id: dbEntityId,
+      id: dbEntity.id,
       refresh: 'wait_for',
-      body: dbEntity,
+      body: dbEntity.data,
     });
 
     return this.entityTransformer.denormalize<Entity>(

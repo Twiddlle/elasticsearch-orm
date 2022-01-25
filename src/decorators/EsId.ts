@@ -1,6 +1,6 @@
 import 'reflect-metadata';
-import { EsProperty, EsPropertyOptions } from './EsProperty';
+import { EsIdOptions, EsProperty } from './EsProperty';
 
-export function EsId(options?: EsPropertyOptions) {
+export function EsId(options?: EsIdOptions) {
   return EsProperty(Object.assign({}, options, { type: 'id', isId: true }));
 }

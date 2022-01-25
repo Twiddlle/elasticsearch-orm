@@ -1,26 +1,33 @@
 import { MetaLoader } from './MetaLoader';
 import { ClassType } from '../types/Class.type';
+import { NormalizedEntity } from '../entity/Normalized.entity';
 
 export class EntityTransformer {
   constructor(private readonly metaLoader: MetaLoader) {}
 
-  normalize(entity: unknown): Record<string, unknown> {
+  normalize(entity: unknown): NormalizedEntity {
     if (!(entity instanceof Object)) {
       throw new Error('Not valid entity to normalize');
     }
     const metaData = this.getMeta(entity);
-    const dbEntity: Record<string, unknown> = {};
+    const dbEntity: NormalizedEntity = {
+      id: entity[metaData.idPropName] || metaData.idGenerator(entity),
+      data: {},
+    };
     for (const prop of metaData.props) {
-      dbEntity[prop.name] = entity[prop.entityPropName];
+      dbEntity.data[prop.name] = entity[prop.entityPropName];
     }
     return dbEntity;
   }
 
-  denormalize<T>(type: ClassType<T>, dbEntity: Record<string, unknown>): T {
+  denormalize<T>(type: ClassType<T>, dbEntity: NormalizedEntity): T {
     const entity = new type();
     const metaData = this.getMeta(entity);
+    entity[metaData.idPropName] = dbEntity.id;
     for (const prop of metaData.props) {
-      entity[prop.entityPropName] = dbEntity[prop.name];
+      if (dbEntity.data[prop.name] !== undefined) {
+        entity[prop.entityPropName] = dbEntity.data[prop.name];
+      }
     }
     return entity;
   }

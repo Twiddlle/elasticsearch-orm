@@ -2,10 +2,16 @@ import { EsType } from '../types/Es.type';
 import 'reflect-metadata';
 import { EsFieldPropertyOptions } from '../types/EsFieldPropertyOptions.interface';
 
+export type idGenerator = (entity) => string;
+
 export interface EsPropertyOptions {
   fieldOptions?: EsFieldPropertyOptions;
   name?: string;
   isId?: boolean;
+}
+
+export interface EsIdOptions extends EsPropertyOptions {
+  generator?: idGenerator;
 }
 
 export interface EsPropertyTypedOptions extends EsPropertyOptions {

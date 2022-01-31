@@ -6,6 +6,9 @@ export interface EsClassTypeOptionsInterface {
   mapping?: {
     dynamic?: DynamicMappingTypes;
   };
+  options?: {
+    refresh?: 'wait_for' | boolean;
+  };
   settings?: {
     number_of_shards?: number;
     number_of_replicas?: number;

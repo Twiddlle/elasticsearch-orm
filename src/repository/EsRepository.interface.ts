@@ -28,7 +28,7 @@ export interface EsRepositoryInterface<Entity = unknown> {
     requestBulkOptions: EsRequestBulkOptions,
   ): Promise<Entity[]>;
 
-  delete(entity: Entity): Promise<boolean>;
+  delete(entity: Entity): Promise<true>;
 
   deleteMultiple(
     entity: Entity,

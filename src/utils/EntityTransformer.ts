@@ -17,6 +17,7 @@ export class EntityTransformer {
     for (const prop of metaData.props) {
       dbEntity.data[prop.name] = entity[prop.entityPropName];
     }
+    delete dbEntity.data[metaData.idPropName];
     return dbEntity;
   }
 

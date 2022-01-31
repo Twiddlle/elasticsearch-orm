@@ -14,13 +14,13 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
 
   constructor(private readonly client: Client) {}
 
-  async create<Entity>(entity: Entity): Promise<Entity> {
+  async create(entity: Entity): Promise<Entity> {
     const dbEntity = this.entityTransformer.normalize(entity);
 
     await this.client.create({
       index: this.getIndex(entity),
       id: dbEntity.id,
-      refresh: 'wait_for',
+      refresh: this.getRefreshOption(entity),
       body: dbEntity.data,
     });
 
@@ -34,8 +34,14 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve([]);
   }
 
-  delete(entity: Entity): Promise<boolean> {
-    return Promise.resolve(false);
+  async delete(entity: Entity): Promise<true> {
+    const dbEntity = this.entityTransformer.normalize(entity);
+    await this.client.delete({
+      refresh: this.getRefreshOption(entity),
+      index: this.getIndex(entity),
+      id: dbEntity.id,
+    });
+    return true;
   }
 
   deleteMultiple(
@@ -49,10 +55,7 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve([]);
   }
 
-  async findById<Entity>(
-    id: string,
-    Entity: ClassType<Entity>,
-  ): Promise<Entity> {
+  async findById(id: string, Entity: ClassType<Entity>): Promise<Entity> {
     const esRes = await this.client.get({
       index: this.metaLoader.getIndex(Entity),
       id: id,
@@ -72,8 +75,17 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve(undefined);
   }
 
-  update(entity: Entity): Promise<Entity> {
-    return Promise.resolve(undefined);
+  async update(entity: Entity): Promise<Entity> {
+    const dbEntity = this.entityTransformer.normalize(entity);
+
+    await this.client.update({
+      index: this.getIndex(entity),
+      id: dbEntity.id,
+      refresh: this.getRefreshOption(entity),
+      body: { doc: dbEntity.data },
+    });
+
+    return this.findById(dbEntity.id, entity.constructor as ClassType<Entity>);
   }
 
   updateMultiple(
@@ -83,8 +95,18 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve([]);
   }
 
-  save(entity: Entity): Promise<Entity> {
-    return Promise.resolve(undefined);
+  async save(entity: Entity): Promise<Entity> {
+    const dbEntity = this.entityTransformer.normalize(entity);
+    await this.client.index({
+      index: this.getIndex(entity),
+      id: dbEntity.id,
+      refresh: this.getRefreshOption(entity),
+      body: dbEntity.data,
+    });
+    return this.entityTransformer.denormalize(
+      entity.constructor as ClassType<Entity>,
+      dbEntity,
+    );
   }
 
   saveMultiple(
@@ -122,5 +144,11 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
 
   private getIndex<Entity>(entity: Entity) {
     return this.metaLoader.getIndex(entity.constructor as ClassType<Entity>);
+  }
+
+  private getRefreshOption<Entity>(entity: Entity) {
+    return this.metaLoader.getReflectMetaData(
+      entity.constructor as ClassType<Entity>,
+    ).entity.options.refresh;
   }
 }

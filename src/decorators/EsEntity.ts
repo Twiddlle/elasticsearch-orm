@@ -23,6 +23,9 @@ export function EsEntity(
         number_of_replicas: 0,
         number_of_shards: 1,
       },
+      options: {
+        refresh: 'wait_for',
+      },
       mapping: {
         dynamic: 'strict',
       },

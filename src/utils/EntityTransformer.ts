@@ -36,9 +36,7 @@ export class EntityTransformer {
   private getMeta(entity) {
     const metaData = this.metaLoader.getReflectMetaData(entity.constructor);
     if (!metaData || !metaData.entity || !metaData.props) {
-      throw new Error(
-        `Instance ${entity.constructor.name} is not valid elastic entity`,
-      );
+      throw new Error(`${entity.constructor.name} is not valid elastic entity`);
     }
     return metaData;
   }

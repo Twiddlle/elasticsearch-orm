@@ -26,23 +26,28 @@ export class MetaLoader {
     Entity: ClassType<T>,
   ): EsMetaDataInterface | undefined {
     if (!this.cache.has(Entity)) {
-      const props = Reflect.getMetadata(
-        EsProperty.name,
-        new Entity(),
-      ) as EsPropertyFullOptions[];
+      const props =
+        (Reflect.getMetadata(
+          EsProperty.name,
+          new Entity(),
+        ) as EsPropertyFullOptions[]) || [];
       let idProp: EsIdOptions;
       for (const prop of props) {
         if (prop.isId) {
+          if (idProp) {
+            throw new Error(
+              `Entity ${Entity.name} has defined multiple identifiers.`,
+            );
+          }
           idProp = prop;
-          break;
         }
       }
 
       const meta: EsMetaDataInterface = {
         props,
         entity: Reflect.getMetadata(EsEntity.name, Entity),
-        idPropName: idProp.name,
-        idGenerator: idProp.generator || defaultIdGenerator,
+        idPropName: idProp?.name,
+        idGenerator: idProp?.generator || defaultIdGenerator,
       };
 
       MetaLoader.validateMetaData(Entity.name, meta);
@@ -56,13 +61,13 @@ export class MetaLoader {
     entityName: string,
     metaData: Partial<EsMetaDataInterface>,
   ) {
+    if (!metaData || !metaData.entity || !metaData.props) {
+      throw new Error(`${entityName} is not valid elastic entity`);
+    }
     if (!metaData.idPropName) {
       throw new Error(
-        `Entity ${entityName} does not have specified id property. Use @EsId decorator.`,
+        `Entity ${entityName} does not have specified id property. Use @EsId decorator or set isId on true.`,
       );
-    }
-    if (!metaData || !metaData.entity || !metaData.props) {
-      throw new Error(`Instance ${entityName} is not valid elastic entity`);
     }
   }
 

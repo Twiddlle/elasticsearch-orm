@@ -2,6 +2,11 @@ import { MetaLoader } from '../../../src/utils/MetaLoader';
 import { TestingClass } from '../../fixtures/TestingClass';
 import { TestingClass as TestingClass2 } from '../../fixtures/TestingClass2';
 import { FactoryProvider } from '../../../src/factory/Factory.provider';
+import {
+  NotValidEntity,
+  NotValidEntityWithMultipleIds1,
+  NotValidEntityWithNoId,
+} from '../../fixtures/NotValidEntities';
 
 describe('meta loader', () => {
   let metaLoader: MetaLoader;
@@ -48,5 +53,39 @@ describe('meta loader', () => {
     expect(metadata.props[2].name).toBe('bar2');
     expect(metadata.props[3].type).toBe('geo_point');
     expect(metadata.props[3].name).toBe('geoPoint2');
+  });
+
+  it('should throw not valid entity', () => {
+    let error;
+    try {
+      metaLoader.getReflectMetaData(NotValidEntity);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe('NotValidEntity is not valid elastic entity');
+  });
+
+  it('should throw not defined id', () => {
+    let error;
+    try {
+      metaLoader.getReflectMetaData(NotValidEntityWithNoId);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe(
+      'Entity NotValidEntityWithNoId does not have specified id property. Use @EsId decorator or set isId on true.',
+    );
+  });
+
+  it('should throw multiple ids error', () => {
+    let error;
+    try {
+      metaLoader.getReflectMetaData(NotValidEntityWithMultipleIds1);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe(
+      'Entity NotValidEntityWithMultipleIds1 has defined multiple identifiers.',
+    );
   });
 });

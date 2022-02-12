@@ -1,4 +1,6 @@
 export interface EsFieldPropertyOptions {
+  [key: string]: unknown;
+
   boost?: number;
   analyzer?: unknown;
   eager_global_ordinals?: unknown;

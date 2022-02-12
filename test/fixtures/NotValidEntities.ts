@@ -21,3 +21,15 @@ export class NotValidEntityWithMultipleIds1 {
   @EsId()
   public identifier: string;
 }
+
+@EsEntity('test_index_main_nested')
+export class NotValidNestedEntity {
+  @EsId()
+  public id: string;
+
+  @EsProperty({
+    type: 'nested',
+    entity: class X {},
+  })
+  public image: { name: string; size: number };
+}

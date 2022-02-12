@@ -1,11 +1,13 @@
 import { EsType } from '../types/Es.type';
 import 'reflect-metadata';
-import { EsFieldPropertyOptions } from '../types/EsFieldPropertyOptions.interface';
 import {
+  EsNestedTypedOptions,
   EsPropertyFullOptions,
   EsPropertyOptions,
   EsPropertyTypedOptions,
 } from '../types/EsPropertyOptions.intarface';
+
+export function EsProperty(options: EsNestedTypedOptions): PropertyDecorator;
 
 export function EsProperty(options: EsPropertyTypedOptions): PropertyDecorator;
 

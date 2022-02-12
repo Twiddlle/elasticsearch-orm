@@ -9,8 +9,13 @@ export class SchemaManager {
 
   generateIndexSchema<T>(Entity: ClassType<T>): EsIndexInterface {
     const meta = this.metaLoader.getReflectMetaData(Entity);
+    const aliases = {};
+    (meta.entity.aliases || []).forEach((alias) => {
+      aliases[alias] = {};
+    });
 
     return {
+      aliases: aliases,
       settings: meta.entity.settings,
       mappings: this.buildMapping(meta),
     };
@@ -23,10 +28,10 @@ export class SchemaManager {
     };
 
     for (const prop of meta.props) {
-      if (!prop.isId) {
-        mapping.properties[prop.name] = {
-          type: prop.type,
-          ...prop.fieldOptions,
+      if (!prop?.options?.isId) {
+        mapping.properties[prop.options.name] = {
+          type: prop.options.type,
+          ...prop.options.fieldOptions,
         };
       }
     }

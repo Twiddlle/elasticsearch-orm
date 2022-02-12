@@ -15,7 +15,7 @@ export class EntityTransformer {
       data: {},
     };
     for (const prop of metaData.props) {
-      dbEntity.data[prop.name] = entity[prop.entityPropName];
+      dbEntity.data[prop.options.name] = entity[prop.options.entityPropName];
     }
     delete dbEntity.data[metaData.idPropName];
     return dbEntity;
@@ -26,8 +26,8 @@ export class EntityTransformer {
     const metaData = this.getMeta(entity);
     entity[metaData.idPropName] = dbEntity.id;
     for (const prop of metaData.props) {
-      if (dbEntity.data[prop.name] !== undefined) {
-        entity[prop.entityPropName] = dbEntity.data[prop.name];
+      if (dbEntity.data[prop.options.name] !== undefined) {
+        entity[prop.options.entityPropName] = dbEntity.data[prop.options.name];
       }
     }
     return entity;

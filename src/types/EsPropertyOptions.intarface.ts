@@ -1,5 +1,6 @@
 import { EsFieldPropertyOptions } from './EsFieldPropertyOptions.interface';
 import { EsType } from './Es.type';
+import { ClassType } from './Class.type';
 
 export type idGenerator = (entity) => string;
 
@@ -7,6 +8,11 @@ export interface EsPropertyOptions {
   fieldOptions?: EsFieldPropertyOptions;
   name?: string;
   isId?: boolean;
+}
+
+export interface EsNestedTypedOptions {
+  type: 'nested';
+  entity: ClassType<unknown>;
 }
 
 export interface EsIdOptions extends EsPropertyOptions {
@@ -20,3 +26,7 @@ export interface EsPropertyTypedOptions extends EsPropertyOptions {
 export interface EsPropertyFullOptions extends EsPropertyTypedOptions {
   entityPropName: string;
 }
+
+export type EsComposedPropertyOptions = EsPropertyFullOptions &
+  EsNestedTypedOptions &
+  EsIdOptions;

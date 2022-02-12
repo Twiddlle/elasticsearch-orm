@@ -2,12 +2,12 @@ import 'reflect-metadata';
 import { EsProperty } from '../decorators/EsProperty';
 import { ClassType } from '../types/Class.type';
 import { EsEntity } from '../decorators/EsEntity';
-import { EsMetaDataInterface } from '../types/EsMetaData.interface';
-import { defaultIdGenerator } from '../entity/defaultIdGenerator';
 import {
-  EsIdOptions,
-  EsPropertyFullOptions,
-} from '../types/EsPropertyOptions.intarface';
+  EsMetaDataInterface,
+  EsPropsMetaDataInterface,
+} from '../types/EsMetaData.interface';
+import { defaultIdGenerator } from '../entity/defaultIdGenerator';
+import { EsComposedPropertyOptions } from '../types/EsPropertyOptions.intarface';
 
 export class MetaLoader {
   private static instance: MetaLoader;
@@ -22,18 +22,48 @@ export class MetaLoader {
     return MetaLoader.instance;
   }
 
+  private getEsProps<T = unknown>(
+    Entity: ClassType<T>,
+  ): EsPropsMetaDataInterface[] {
+    const props: EsPropsMetaDataInterface[] = [];
+    const entityProps =
+      (Reflect.getMetadata(
+        EsProperty.name,
+        new Entity(),
+      ) as EsComposedPropertyOptions[]) || [];
+
+    for (const prop of entityProps) {
+      const metaProp: EsPropsMetaDataInterface = {
+        options: prop,
+      };
+      if (prop.type === 'nested') {
+        metaProp.isNested = true;
+
+        const notValidNestedErr = new Error(
+          `Not valid nested entity for prop ${prop.entityPropName} in entity ${Entity.name}.`,
+        );
+        if (!prop.entity) {
+          throw notValidNestedErr;
+        }
+        metaProp.props = this.getEsProps(prop.entity);
+        if (metaProp.props.length === 0) {
+          throw notValidNestedErr;
+        }
+      }
+      props.push(metaProp);
+    }
+
+    return props;
+  }
+
   public getReflectMetaData<T = unknown>(
     Entity: ClassType<T>,
   ): EsMetaDataInterface | undefined {
     if (!this.cache.has(Entity)) {
-      const props =
-        (Reflect.getMetadata(
-          EsProperty.name,
-          new Entity(),
-        ) as EsPropertyFullOptions[]) || [];
-      let idProp: EsIdOptions;
+      const props = this.getEsProps(Entity);
+      let idProp: EsPropsMetaDataInterface;
       for (const prop of props) {
-        if (prop.isId) {
+        if (prop.options.isId) {
           if (idProp) {
             throw new Error(
               `Entity ${Entity.name} has defined multiple identifiers.`,
@@ -46,8 +76,8 @@ export class MetaLoader {
       const meta: EsMetaDataInterface = {
         props,
         entity: Reflect.getMetadata(EsEntity.name, Entity),
-        idPropName: idProp?.name,
-        idGenerator: idProp?.generator || defaultIdGenerator,
+        idPropName: idProp?.options?.name,
+        idGenerator: idProp?.options?.generator || defaultIdGenerator,
       };
 
       MetaLoader.validateMetaData(Entity.name, meta);

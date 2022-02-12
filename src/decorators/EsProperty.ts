@@ -25,7 +25,7 @@ export function EsProperty(
       name: name as string,
       entityPropName: name as string,
       type: 'unknown',
-      fieldOptions: {},
+      additionalFieldOptions: {},
     };
     let propertyOptions: EsPropertyFullOptions;
 

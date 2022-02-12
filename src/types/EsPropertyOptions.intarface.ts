@@ -5,7 +5,7 @@ import { ClassType } from './Class.type';
 export type idGenerator = (entity) => string;
 
 export interface EsPropertyOptions {
-  fieldOptions?: EsFieldPropertyOptions;
+  additionalFieldOptions?: EsFieldPropertyOptions;
   name?: string;
   isId?: boolean;
 }

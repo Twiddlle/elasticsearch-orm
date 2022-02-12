@@ -3,7 +3,7 @@ import { EsRepository } from '../../../src/repository/EsRepository';
 import { Client } from '@elastic/elasticsearch';
 
 describe('Es Repository', () => {
-  let repository: EsRepository;
+  let repository: EsRepository<TestingClass>;
   let client: Client;
 
   beforeAll(() => {

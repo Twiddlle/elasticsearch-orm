@@ -19,7 +19,7 @@ export class TestingNestedClass {
 
   @EsProperty('integer', {
     name: 'Foo',
-    fieldOptions: {
+    additionalFieldOptions: {
       boost: 10,
     },
   })

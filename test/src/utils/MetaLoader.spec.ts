@@ -26,10 +26,10 @@ describe('meta loader', () => {
 
     expect(metadata.props[0].options.type).toBe('id');
     expect(metadata.props[0].options.name).toBe('id');
-    expect(metadata.props[1].options.fieldOptions.boost).toBe(10);
+    expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[1].options.type).toBe('integer');
     expect(metadata.props[1].options.name).toBe('Foo');
-    expect(metadata.props[1].options.fieldOptions.boost).toBe(10);
+    expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[2].options.type).toBe('boolean');
     expect(metadata.props[2].options.name).toBe('bar');
     expect(metadata.props[3].options.type).toBe('geo_point');
@@ -46,10 +46,10 @@ describe('meta loader', () => {
 
     expect(metadata.props[0].options.type).toBe('id');
     expect(metadata.props[0].options.name).toBe('id');
-    expect(metadata.props[1].options.fieldOptions.boost).toBe(10);
+    expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[1].options.type).toBe('integer');
     expect(metadata.props[1].options.name).toBe('Foo_2');
-    expect(metadata.props[1].options.fieldOptions.boost).toBe(10);
+    expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[2].options.type).toBe('boolean');
     expect(metadata.props[2].options.name).toBe('bar2');
     expect(metadata.props[3].options.type).toBe('geo_point');

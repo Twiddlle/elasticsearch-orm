@@ -31,7 +31,7 @@ export class SchemaManager {
       if (!prop?.options?.isId) {
         mapping.properties[prop.options.name] = {
           type: prop.options.type,
-          ...prop.options.fieldOptions,
+          ...prop.options.additionalFieldOptions,
         };
       }
     }

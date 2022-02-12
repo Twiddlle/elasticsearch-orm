@@ -11,7 +11,7 @@ export class TestingClass {
 
   @EsProperty('integer', {
     name: 'Foo_2',
-    fieldOptions: {
+    additionalFieldOptions: {
       boost: 10,
     },
   })

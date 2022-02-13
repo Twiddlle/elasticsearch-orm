@@ -1,6 +1,7 @@
 import {
   EsRepositoryInterface,
   EsRequestBulkOptions,
+  EsSearchOptions,
 } from './EsRepository.interface';
 import { Client } from '@elastic/elasticsearch';
 import { ClassType } from '../types/Class.type';
@@ -12,7 +13,10 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
   private readonly entityTransformer = FactoryProvider.makeEntityTransformer();
 
-  constructor(private readonly client: Client) {}
+  constructor(
+    private readonly Entity: ClassType<Entity>,
+    private readonly client: Client,
+  ) {}
 
   async create(entity: Entity): Promise<Entity> {
     const dbEntity = this.entityTransformer.normalize(entity);
@@ -24,7 +28,7 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
       body: dbEntity.data,
     });
 
-    return this.findById(dbEntity.id, entity.constructor as ClassType<Entity>);
+    return this.findById(dbEntity.id);
   }
 
   createMultiple(
@@ -44,24 +48,33 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return true;
   }
 
-  deleteMultiple(
-    entity: Entity,
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity> {
+  deleteMultiple(requestBulkOptions: EsRequestBulkOptions): Promise<Entity> {
     return Promise.resolve(undefined);
   }
 
-  find(query): Promise<Entity[]> {
+  find(
+    query,
+    limit?: number,
+    offset?: number,
+    options?: EsSearchOptions<Entity>,
+  ): Promise<Entity[]> {
+    this.client.search({
+      index: this.metaLoader.getIndex(this.Entity),
+      _source: options.source as string[],
+      size: limit,
+      from: offset,
+      body: query,
+    });
     return Promise.resolve([]);
   }
 
-  async findById(id: string, Entity: ClassType<Entity>): Promise<Entity> {
+  async findById(id: string): Promise<Entity> {
     const esRes = await this.client.get({
-      index: this.metaLoader.getIndex(Entity),
+      index: this.metaLoader.getIndex(this.Entity),
       id: id,
     });
 
-    return this.entityTransformer.denormalize(Entity, {
+    return this.entityTransformer.denormalize(this.Entity, {
       id: esRes.body._id,
       data: esRes.body._source,
     });
@@ -85,7 +98,7 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
       body: { doc: dbEntity.data },
     });
 
-    return this.findById(dbEntity.id, entity.constructor as ClassType<Entity>);
+    return this.findById(dbEntity.id);
   }
 
   updateMultiple(
@@ -116,28 +129,22 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve([]);
   }
 
-  async createIndex<Entity>(
-    Entity: ClassType<Entity>,
-    indexInterface: EsIndexInterface,
-  ): Promise<void> {
+  async createIndex<Entity>(indexInterface: EsIndexInterface): Promise<void> {
     await this.client.indices.create({
-      index: this.metaLoader.getIndex(Entity),
+      index: this.metaLoader.getIndex(this.Entity),
       body: indexInterface,
     });
   }
 
-  async deleteIndex(Entity: ClassType<Entity>): Promise<void> {
+  async deleteIndex(): Promise<void> {
     await this.client.indices.delete({
-      index: this.metaLoader.getIndex(Entity),
+      index: this.metaLoader.getIndex(this.Entity),
     });
   }
 
-  async updateMapping(
-    Entity: ClassType<Entity>,
-    mapping: EsMappingInterface,
-  ): Promise<void> {
+  async updateMapping(mapping: EsMappingInterface): Promise<void> {
     await this.client.indices.putMapping({
-      index: this.metaLoader.getIndex(Entity),
+      index: this.metaLoader.getIndex(this.Entity),
       body: mapping,
     });
   }

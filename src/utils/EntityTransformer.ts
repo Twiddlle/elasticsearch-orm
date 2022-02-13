@@ -1,6 +1,7 @@
 import { MetaLoader } from './MetaLoader';
 import { ClassType } from '../types/Class.type';
 import { NormalizedEntity } from '../entity/Normalized.entity';
+import { EsPropsMetaDataInterface } from '../types/EsMetaData.interface';
 
 export class EntityTransformer {
   constructor(private readonly metaLoader: MetaLoader) {}
@@ -12,25 +13,56 @@ export class EntityTransformer {
     const metaData = this.getMeta(entity);
     const dbEntity: NormalizedEntity = {
       id: entity[metaData.idPropName] || metaData.idGenerator(entity),
-      data: {},
+      data: this.normalizeProps(entity, metaData.props),
     };
-    for (const prop of metaData.props) {
-      dbEntity.data[prop.options.name] = entity[prop.options.entityPropName];
-    }
     delete dbEntity.data[metaData.idPropName];
     return dbEntity;
+  }
+
+  private normalizeProps(entity: unknown, props: EsPropsMetaDataInterface[]) {
+    const dbEntityData: Record<string, unknown> = {};
+    for (const prop of props) {
+      if (prop.isNested) {
+        dbEntityData[prop.options.name] = this.normalizeProps(
+          entity[prop.options.entityPropName],
+          prop.props,
+        );
+      } else {
+        dbEntityData[prop.options.name] = entity[prop.options.entityPropName];
+      }
+    }
+    return dbEntityData;
   }
 
   denormalize<T>(type: ClassType<T>, dbEntity: NormalizedEntity): T {
     const entity = new type();
     const metaData = this.getMeta(entity);
     entity[metaData.idPropName] = dbEntity.id;
-    for (const prop of metaData.props) {
-      if (dbEntity.data[prop.options.name] !== undefined) {
-        entity[prop.options.entityPropName] = dbEntity.data[prop.options.name];
+    this.denormalizeProps(entity, dbEntity.data, metaData.props);
+    return entity;
+  }
+
+  private denormalizeProps<T>(
+    denormalizedEntity: T,
+    dbEntityData: Record<string, unknown>,
+    props: EsPropsMetaDataInterface[],
+  ) {
+    for (const prop of props) {
+      if (dbEntityData[prop.options.name] !== undefined) {
+        if (prop.isNested) {
+          denormalizedEntity[prop.options.entityPropName] =
+            this.denormalizeProps(
+              new prop.options.entity(),
+              dbEntityData[prop.options.name] as Record<string, unknown>,
+              prop.props,
+            );
+        } else {
+          denormalizedEntity[prop.options.entityPropName] =
+            dbEntityData[prop.options.name];
+        }
       }
     }
-    return entity;
+    return denormalizedEntity;
   }
 
   private getMeta(entity) {

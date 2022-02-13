@@ -6,6 +6,12 @@ import {
   EsPropertyOptions,
   EsPropertyTypedOptions,
 } from '../types/EsPropertyOptions.intarface';
+import { ClassType } from '../types/Class.type';
+
+export function EsProperty(
+  entity: ClassType<unknown>,
+  option2?: EsPropertyOptions,
+): PropertyDecorator;
 
 export function EsProperty(options: EsNestedTypedOptions): PropertyDecorator;
 
@@ -17,7 +23,7 @@ export function EsProperty(
 ): PropertyDecorator;
 
 export function EsProperty(
-  option1?: EsType | EsPropertyTypedOptions,
+  option1?: EsType | EsPropertyTypedOptions | ClassType<unknown>,
   option2?: EsPropertyOptions,
 ): PropertyDecorator {
   return (target, name) => {
@@ -29,7 +35,13 @@ export function EsProperty(
     };
     let propertyOptions: EsPropertyFullOptions;
 
-    if (typeof option1 === 'string') {
+    if (typeof option1 === 'function') {
+      propertyOptions = Object.assign(
+        defaultOptions,
+        { type: 'nested', entity: option1 },
+        option2 || {},
+      );
+    } else if (typeof option1 === 'string') {
       propertyOptions = Object.assign(
         defaultOptions,
         { type: option1 },

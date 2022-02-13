@@ -14,6 +14,7 @@ describe('Repository', () => {
 
   beforeAll(async () => {
     repository = new EsRepository(
+      TestingClass,
       new Client({
         nodes: [process.env.ELASTIC_HOST],
         auth: {
@@ -26,14 +27,14 @@ describe('Repository', () => {
     try {
       const schema =
         FactoryProvider.makeSchemaManager().generateIndexSchema(TestingClass);
-      await repository.createIndex(TestingClass, schema);
+      await repository.createIndex(schema);
     } catch (e) {
       console.warn(e.message);
     }
   });
 
   afterAll(async () => {
-    await repository.deleteIndex(TestingClass);
+    await repository.deleteIndex();
   });
 
   it('should create entity', async () => {
@@ -49,7 +50,7 @@ describe('Repository', () => {
   });
 
   it('should get entity', async () => {
-    const entity = await repository.findById(createdEntity.id, TestingClass);
+    const entity = await repository.findById(createdEntity.id);
     expect(entity.id).toHaveLength(21);
     expect(entity.foo).toBe(1);
     expect(entity.bar).toBe(true);
@@ -85,7 +86,7 @@ describe('Repository', () => {
 
     let error: ResponseError;
     try {
-      await repository.findById(createdEntity.id, TestingClass);
+      await repository.findById(createdEntity.id);
     } catch (e) {
       error = e;
     }

@@ -1,6 +1,9 @@
 import { MetaLoader } from './MetaLoader';
 import { ClassType } from '../types/Class.type';
-import { EsMetaDataInterface } from '../types/EsMetaData.interface';
+import {
+  EsMetaDataInterface,
+  EsPropsMetaDataInterface,
+} from '../types/EsMetaData.interface';
 import { EsMappingInterface } from '../types/EsMapping.interface';
 import { EsIndexInterface } from '../types/EsIndex.interface';
 
@@ -27,15 +30,29 @@ export class SchemaManager {
       properties: {},
     };
 
-    for (const prop of meta.props) {
+    mapping.properties = this.buildMappingProperties(meta.props);
+
+    return mapping;
+  }
+
+  private buildMappingProperties(props: EsPropsMetaDataInterface[]) {
+    const mappingProperties: Record<string, Record<string, unknown>> = {};
+    for (const prop of props) {
       if (!prop?.options?.isId) {
-        mapping.properties[prop.options.name] = {
-          type: prop.options.type,
-          ...prop.options.additionalFieldOptions,
-        };
+        if (prop.isNested) {
+          mappingProperties[prop.options.name] = {
+            type: 'nested',
+            properties: this.buildMappingProperties(prop.props),
+          };
+        } else {
+          mappingProperties[prop.options.name] = {
+            type: prop.options.type,
+            ...prop.options.additionalFieldOptions,
+          };
+        }
       }
     }
 
-    return mapping;
+    return mappingProperties;
   }
 }

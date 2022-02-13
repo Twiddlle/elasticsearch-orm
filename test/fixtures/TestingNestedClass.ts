@@ -3,11 +3,23 @@ import { EsProperty } from '../../src/decorators/EsProperty';
 import { EsId } from '../../src/decorators/EsId';
 
 export class TestingImageClass {
-  @EsProperty('keyword')
+  @EsProperty('keyword', {
+    name: 'fullName',
+  })
   public name: string;
 
   @EsProperty('integer')
   public size: number;
+}
+
+export class TestingAuthorClass {
+  @EsProperty('keyword')
+  public name: string;
+
+  @EsProperty(TestingImageClass, {
+    name: 'authorImage',
+  })
+  public image: TestingImageClass;
 }
 
 @EsEntity('test_index_main_nested', {
@@ -29,5 +41,8 @@ export class TestingNestedClass {
     type: 'nested',
     entity: TestingImageClass,
   })
-  public image: { name: string; size: number };
+  public image: TestingImageClass;
+
+  @EsProperty(TestingAuthorClass)
+  public author: TestingAuthorClass;
 }

@@ -10,7 +10,7 @@ describe('Es Repository', () => {
     client = new Client({
       nodes: ['http://localhost:9200'],
     });
-    repository = new EsRepository(client);
+    repository = new EsRepository(TestingClass, client);
   });
 
   it('create valid entity', async () => {

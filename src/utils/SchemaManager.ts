@@ -30,22 +30,25 @@ export class SchemaManager {
       properties: {},
     };
 
-    mapping.properties = this.buildMappingProperties(meta.props);
+    mapping.properties = this.buildMappingProperties(meta.props, meta);
 
     return mapping;
   }
 
-  private buildMappingProperties(props: EsPropsMetaDataInterface[]) {
+  private buildMappingProperties(
+    props: EsPropsMetaDataInterface[],
+    meta: EsMetaDataInterface,
+  ) {
     const mappingProperties: Record<string, Record<string, unknown>> = {};
     for (const prop of props) {
       if (!prop?.options?.isId) {
         if (prop.isNested) {
-          mappingProperties[prop.options.name] = {
+          mappingProperties[meta.entity.namingStrategy(prop)] = {
             type: 'nested',
-            properties: this.buildMappingProperties(prop.props),
+            properties: this.buildMappingProperties(prop.props, meta),
           };
         } else {
-          mappingProperties[prop.options.name] = {
+          mappingProperties[meta.entity.namingStrategy(prop)] = {
             type: prop.options.type,
             ...prop.options.additionalFieldOptions,
           };

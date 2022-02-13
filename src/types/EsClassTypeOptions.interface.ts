@@ -1,8 +1,13 @@
+import { EsPropsMetaDataInterface } from './EsMetaData.interface';
+
 export type DynamicMappingTypes = 'true' | 'runtime' | 'false' | 'strict';
+
+export type namingStrategyFunction = (prop: EsPropsMetaDataInterface) => string;
 
 export interface EsClassTypeOptionsInterface {
   aliases?: string[];
   name?: string;
+  namingStrategy?: namingStrategyFunction;
   mapping?: {
     dynamic?: DynamicMappingTypes;
   };

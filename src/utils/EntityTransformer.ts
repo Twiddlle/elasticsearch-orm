@@ -27,10 +27,21 @@ export class EntityTransformer {
     props: EsPropsMetaDataInterface[],
     meta: EsMetaDataInterface,
   ) {
+    if (entity instanceof Array) {
+      return entity.map((entityItem) => {
+        return this.normalizeProps(entityItem, props, meta);
+      });
+    }
+
     const dbEntityData: Record<string, unknown> = {};
     for (const prop of props) {
+      // eslint-disable-next-line no-prototype-builtins
+      if (!entity.hasOwnProperty(prop.options.entityPropName)) {
+        continue;
+      }
+
       if (prop.isNested) {
-        dbEntityData[prop.options.name] = this.normalizeProps(
+        dbEntityData[meta.entity.namingStrategy(prop)] = this.normalizeProps(
           entity[prop.options.entityPropName],
           prop.props,
           meta,
@@ -57,6 +68,25 @@ export class EntityTransformer {
     props: EsPropsMetaDataInterface[],
     meta: EsMetaDataInterface,
   ) {
+    if (dbEntityData instanceof Array) {
+      return dbEntityData.map((dbEntityDataItem) => {
+        let dbEntityDataItemCloned = denormalizedEntity;
+        if (
+          denormalizedEntity instanceof Object &&
+          denormalizedEntity?.constructor
+        ) {
+          dbEntityDataItemCloned =
+            new (denormalizedEntity.constructor as ClassType<T>)();
+        }
+        return this.denormalizeProps(
+          dbEntityDataItemCloned,
+          dbEntityDataItem,
+          props,
+          meta,
+        );
+      });
+    }
+
     for (const prop of props) {
       const strategyPropName = meta.entity.namingStrategy(prop);
       if (dbEntityData[strategyPropName] !== undefined) {

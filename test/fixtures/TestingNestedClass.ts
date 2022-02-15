@@ -22,9 +22,7 @@ export class TestingAuthorClass {
   public image: TestingImageClass;
 }
 
-@EsEntity('test_index_main_nested', {
-  aliases: ['test_alias_read_nested', 'test_alias_read_nested'],
-})
+@EsEntity('test_index_main_nested')
 export class TestingNestedClass {
   @EsId()
   public id: string;
@@ -45,4 +43,27 @@ export class TestingNestedClass {
 
   @EsProperty(TestingAuthorClass)
   public author: TestingAuthorClass;
+}
+
+@EsEntity('test_index_main_nested_array')
+export class TestingNestedArrayClass {
+  @EsId()
+  public id: string;
+
+  @EsProperty('integer', {
+    name: 'Foo',
+    additionalFieldOptions: {
+      boost: 10,
+    },
+  })
+  public foo: number[];
+
+  @EsProperty({
+    type: 'nested',
+    entity: TestingImageClass,
+  })
+  public image: TestingImageClass;
+
+  @EsProperty(TestingAuthorClass)
+  public author: TestingAuthorClass[];
 }

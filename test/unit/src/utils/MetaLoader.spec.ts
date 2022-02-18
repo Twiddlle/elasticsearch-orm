@@ -1,13 +1,13 @@
-import { MetaLoader } from '../../../src/utils/MetaLoader';
-import { TestingClass } from '../../fixtures/TestingClass';
-import { TestingClass as TestingClass2 } from '../../fixtures/TestingClass2';
-import { FactoryProvider } from '../../../src/factory/Factory.provider';
+import { MetaLoader } from '../../../../src/utils/MetaLoader';
+import { TestingClass } from '../../../fixtures/TestingClass';
+import { TestingClass as TestingClass2 } from '../../../fixtures/TestingClass2';
+import { FactoryProvider } from '../../../../src/factory/Factory.provider';
 import {
   NotValidEntity,
   NotValidEntityWithMultipleIds1,
   NotValidEntityWithNoId,
   NotValidNestedEntity,
-} from '../../fixtures/NotValidEntities';
+} from '../../../fixtures/NotValidEntities';
 
 describe('meta loader', () => {
   let metaLoader: MetaLoader;

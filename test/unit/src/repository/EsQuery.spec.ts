@@ -1,4 +1,4 @@
-import { EsQuery } from '../../../src/repository/EsQuery';
+import { EsQuery } from '../../../../src/repository/EsQuery';
 
 describe('EsQuery', () => {
   it('typescript syntax for interfaces', () => {

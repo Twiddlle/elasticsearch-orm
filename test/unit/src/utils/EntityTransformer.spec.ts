@@ -1,9 +1,9 @@
-import { TestingClass } from '../../fixtures/TestingClass';
-import { TestingClass as TestingClass2 } from '../../fixtures/TestingClass2';
-import { EntityTransformer } from '../../../src/utils/EntityTransformer';
-import { FactoryProvider } from '../../../src/factory/Factory.provider';
-import { TestingClassWithCamelNamingStrategy } from '../../fixtures/TestingClassWithCamelNamingStrategy';
-import { TestingClassWithSnakeNamingStrategy } from '../../fixtures/TestingClassWithSnakeNamingStrategy';
+import { TestingClass } from '../../../fixtures/TestingClass';
+import { TestingClass as TestingClass2 } from '../../../fixtures/TestingClass2';
+import { EntityTransformer } from '../../../../src/utils/EntityTransformer';
+import { FactoryProvider } from '../../../../src/factory/Factory.provider';
+import { TestingClassWithCamelNamingStrategy } from '../../../fixtures/TestingClassWithCamelNamingStrategy';
+import { TestingClassWithSnakeNamingStrategy } from '../../../fixtures/TestingClassWithSnakeNamingStrategy';
 
 describe('entity transformer', () => {
   let entityTransformer: EntityTransformer;

@@ -1,5 +1,5 @@
-import { TestingClass } from '../../fixtures/TestingClass';
-import { EsRepository } from '../../../src/repository/EsRepository';
+import { TestingClass } from '../../../fixtures/TestingClass';
+import { EsRepository } from '../../../../src/repository/EsRepository';
 import { Client } from '@elastic/elasticsearch';
 
 describe('Es Repository', () => {

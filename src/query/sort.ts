@@ -1,41 +1,50 @@
 import { ElasticSearchTypes } from '../types/Es.type';
-import { FieldType, geoPointType, geoPolygonType } from './common';
-import { Filter } from './filter';
+import { EsFieldType, EsGeoPointType, EsGeoPolygonType } from './common';
+import { EsFilter } from './filter';
 
-export type orderAscendingType = 'asc' | 'desc';
-export type sortNestedOption<T> = {
-  path: FieldType<T> | string;
-  filter?: Filter<T>;
-  nested?: sortNestedOption<T>;
-};
-export type sortTypes<T> =
-  | Array<sortTypeScalar | sortTypeComplex<T>>
-  | sortTypeScript;
-// | sortTypeGeoDistance<T>;
-export type sortTypeScalar = '_score';
-export type sortTypeComplex<T> = Record<FieldType<T>, sortTypeComplexField<T>>;
+export type EsOrderAscendingType = 'asc' | 'desc';
+export interface EsSortNestedOption<T> {
+  path: EsFieldType<T> | string;
+  filter?: EsFilter<T>;
+  nested?: EsSortNestedOption<T>;
+}
+export type EsSortTypes<T = unknown> =
+  | Array<EsSortTypeScalar>
+  | Array<EsSortTypeComplex<T> | EsSortTypeGeoDistance<T>>
+  | EsSortTypeScript;
+export type EsSortTypeScalar = '_score';
+// export type sortTypeComplex<T> = {
+//   [field in FieldType<T>]?: sortTypeComplexField<T>;
+// };
+export type EsSortTypeComplex<T> = Record<
+  EsFieldType<T> | '_geo_distance',
+  EsSortTypeComplexField<T>
+>;
 // & sortTypeGeoDistance<T>;
-export type sortTypeComplexField<T> = {
-  order: orderAscendingType;
+export interface EsSortTypeComplexField<T> {
+  order: EsOrderAscendingType;
   format?: 'strict_date_optional_time_nanos' | 'strict_date_optional_time';
   mode?: 'min' | 'max' | 'sum' | 'avg' | 'median';
   numeric_type?: 'double' | 'long' | 'date' | 'date_nanos';
-  nested?: sortNestedOption<T>;
+  nested?: EsSortNestedOption<T>;
   missing?: '_last' | '_first';
   unmapped_type?: keyof typeof ElasticSearchTypes;
-};
-export type sortTypeScript = {
-  type: string;
-  script: {
-    lang?: 'painless';
-    source: string;
-    params?: {
-      factor: number;
+}
+export interface EsSortTypeScript {
+  _script: {
+    type: 'number';
+    script: {
+      lang?: 'painless';
+      source: string;
+      params?: {
+        factor: number;
+      };
+      order: EsOrderAscendingType;
     };
-    order: orderAscendingType;
   };
-};
-export type sortTypeGeoDistance<T> = {
-  _geo_distance?: Record<FieldType<T>, geoPolygonType | geoPointType> &
-    sortTypeComplexField<T>;
-};
+}
+export interface EsSortTypeGeoDistance<T> {
+  _geo_distance?:
+    | Record<EsFieldType<T> | string, EsGeoPolygonType | EsGeoPointType>
+    | EsSortTypeComplexField<T>;
+}

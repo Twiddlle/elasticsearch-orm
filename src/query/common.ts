@@ -1,9 +1,9 @@
-export type FieldType<T, U = keyof T> = U | string;
-export type FieldTypes<T, U = keyof T> = U[] | string[];
+export type EsFieldType<T, U = keyof T> = U | string;
+export type EsFieldTypes<T, U = keyof T> = U[] | string[];
 
-export type geoPolygonType = geoPointType[];
+export type EsGeoPolygonType = EsGeoPointType[];
 
-export type geoPointType =
+export type EsGeoPointType =
   | [number, number]
   | {
       lat: number;

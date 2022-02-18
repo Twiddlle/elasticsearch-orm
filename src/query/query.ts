@@ -1,12 +1,53 @@
 //todo: add more version of elastic queries 7.x, 8.x
-import { TestingClass } from '../../test/fixtures/TestingClass';
-import { sortTypes } from './sort';
-import { FieldTypes } from './common';
+import {
+  EsFulltextQueryCombinedFields,
+  EsFulltextQueryIntervals,
+  EsFulltextQueryMatch,
+  EsFulltextQueryMatchBooleanPrefix,
+  EsFulltextQueryMatchBooleanPrefixShort,
+  EsFulltextQueryMatchPhraseQuery,
+  EsFulltextQueryMatchPhraseQueryPrefix,
+  EsFulltextQueryMatchPhraseQueryPrefixShort,
+  EsFulltextQueryMatchPhraseQueryShort,
+  EsFulltextQueryMatchShort,
+  EsFulltextQueryMultiMatchFields,
+  EsFulltextQueryString,
+  EsFulltextSimpleQueryString,
+} from './fulltextQueries';
+
+export interface EsFuzziness {}
+
+export type EsQueryObject<T> =
+  | EsFulltextQueryMatch<T>
+  | EsFulltextQueryMatchShort<T>
+  | EsFulltextQueryIntervals<T>
+  | EsFulltextQueryMatchBooleanPrefix<T>
+  | EsFulltextQueryMatchBooleanPrefixShort<T>
+  | EsFulltextQueryMatchPhraseQuery<T>
+  | EsFulltextQueryMatchPhraseQueryShort<T>
+  | EsFulltextQueryMatchPhraseQueryPrefix<T>
+  | EsFulltextQueryMatchPhraseQueryPrefixShort<T>
+  | EsFulltextQueryCombinedFields<T>
+  | EsFulltextQueryMultiMatchFields<T>
+  | EsFulltextQueryString<T>
+  | EsFulltextSimpleQueryString<T>;
+
+export interface EsBoolQuery<T> {
+  bool: Record<
+    'must' | 'must_not' | 'should' | 'filter',
+    Array<EsQueryObject<T>>
+  >;
+}
+
+export interface EsQueryMatchAll {
+  match_all: Record<string, unknown>;
+}
 
 export interface EsQuery<T = unknown> {
-  query: {
-    // populated by a global rule
-  };
+  query: EsBoolQuery<T> | EsQueryObject<T> | EsQueryMatchAll;
+  size?: number;
+  from?: number;
+  /*
   profile?: boolean;
   aggs?: {
     [name: string]: {
@@ -19,14 +60,14 @@ export interface EsQuery<T = unknown> {
   };
   size?: number;
   from?: number;
-  sort?: Array<sortTypes<T>>;
+  sort?: Array<EsSortTypes<T>>;
   track_scores?: boolean;
   pit?: {
     id: string;
     keep_alive: 'string';
   };
   search_after?: [];
-  stored_fields?: FieldTypes<T>;
+  stored_fields?: EsFieldTypes<T>;
   suggest: {
     __template: {
       YOUR_SUGGESTION: {
@@ -138,9 +179,5 @@ export interface EsQuery<T = unknown> {
   stats: [''];
   timeout: '1s';
   version: { __one_of: [true, false] };
-  track_total_hits: { __one_of: [true, false] };
+  track_total_hits: { __one_of: [true, false] };*/
 }
-
-const x: EsQuery<TestingClass> = {
-  aggs: {},
-};

@@ -5,7 +5,7 @@ export class DevGenerator {
   private readonly interfaceFilesContents: string[] = [];
   private readonly typesRegEpx = new RegExp('[a-zA-Z]+<T[^>]*>', 'g');
   private readonly interfaceRegEpx = new RegExp(
-    '(export\\s+interface\\s+([^\\s]+)\\s+{.*\\})\\s+?(export)',
+    '(export\\s+interface\\s+([^\\s]+)\\s+{.*\\})\\s+\\{[^}]+[^;]',
     'gm',
   );
   private readonly fieldTypeName = 'EsFieldType<T>';

@@ -14,6 +14,10 @@ import {
   EsFulltextQueryString,
   EsFulltextSimpleQueryString,
 } from './fulltextQueries';
+import { EsSortTypes } from './sort';
+import { EsSourceTypes } from './source';
+import { EsQueryFieldsTypes } from './fields';
+import { EsTermLevelQueries } from './termQueries';
 
 export interface EsFuzziness {}
 
@@ -30,7 +34,8 @@ export type EsQueryObject<T> =
   | EsFulltextQueryCombinedFields<T>
   | EsFulltextQueryMultiMatchFields<T>
   | EsFulltextQueryString<T>
-  | EsFulltextSimpleQueryString<T>;
+  | EsFulltextSimpleQueryString<T>
+  | EsTermLevelQueries<T>;
 
 export interface EsBoolQuery<T> {
   bool: Record<
@@ -47,6 +52,9 @@ export interface EsQuery<T = unknown> {
   query: EsBoolQuery<T> | EsQueryObject<T> | EsQueryMatchAll;
   size?: number;
   from?: number;
+  sort?: EsSortTypes;
+  _source?: EsSourceTypes<T>;
+  fields?: EsQueryFieldsTypes<T>;
   /*
   profile?: boolean;
   aggs?: {
@@ -180,4 +188,5 @@ export interface EsQuery<T = unknown> {
   timeout: '1s';
   version: { __one_of: [true, false] };
   track_total_hits: { __one_of: [true, false] };*/
+  track_total_hits?: boolean;
 }

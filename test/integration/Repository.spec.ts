@@ -57,6 +57,22 @@ describe('Repository', () => {
     expect(entity.geoPoint).toMatchObject([14, 15]);
   });
 
+  it('should find entity', async () => {
+    const foundEntity = await repository.find({
+      query: {
+        term: {
+          //todo: implement naming strategy conversion
+          Foo: 1,
+        },
+      },
+    });
+
+    expect(foundEntity[0].id).toHaveLength(21);
+    expect(foundEntity[0].foo).toBe(1);
+    expect(foundEntity[0].bar).toBe(true);
+    expect(foundEntity[0].geoPoint).toMatchObject([14, 15]);
+  });
+
   it('should update entity', async () => {
     const entityToUpdate = Object.assign(new TestingClass(), createdEntity, {
       foo: 2,

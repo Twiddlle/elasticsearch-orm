@@ -8,8 +8,9 @@ import { ClassType } from '../types/Class.type';
 import { FactoryProvider } from '../factory/Factory.provider';
 import { EsIndexInterface } from '../types/EsIndex.interface';
 import { EsMappingInterface } from '../types/EsMapping.interface';
+import { EsQuery } from '../query/query';
 
-export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
+export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
   private readonly entityTransformer = FactoryProvider.makeEntityTransformer();
 
@@ -52,20 +53,26 @@ export class EsRepository<Entity = unknown> implements EsRepositoryInterface {
     return Promise.resolve(undefined);
   }
 
-  find(
-    query,
-    limit?: number,
-    offset?: number,
+  async find(
+    query: EsQuery<Entity>,
     options?: EsSearchOptions<Entity>,
   ): Promise<Entity[]> {
-    this.client.search({
+    const res = await this.client.search({
       index: this.metaLoader.getIndex(this.Entity),
-      _source: options.source as string[],
-      size: limit,
-      from: offset,
+      _source: options?.source as string[],
       body: query,
     });
-    return Promise.resolve([]);
+
+    console.log(123);
+
+    const hits = res.body?.hits?.hits || [];
+
+    return hits.map((item) => {
+      return this.entityTransformer.denormalize(this.Entity, {
+        id: item._id,
+        data: item?._source || {},
+      });
+    });
   }
 
   async findById(id: string): Promise<Entity> {

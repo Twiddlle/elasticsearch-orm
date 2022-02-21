@@ -1,5 +1,6 @@
 import { EsIndexInterface } from '../types/EsIndex.interface';
 import { EsMappingInterface } from '../types/EsMapping.interface';
+import { EsQuery } from '../query/query';
 
 export interface EsRequestBulkOptions {
   throwException?: true;
@@ -9,7 +10,7 @@ export interface EsSearchOptions<T, U = keyof T> {
   source?: U[] | string[];
 }
 
-export interface EsRepositoryInterface<Entity = unknown> {
+export interface EsRepositoryInterface<Entity> {
   create(entity: Entity): Promise<Entity>;
 
   createMultiple(
@@ -40,9 +41,7 @@ export interface EsRepositoryInterface<Entity = unknown> {
   findOneOrFail(query): Promise<Entity>;
 
   find(
-    query,
-    limit?: number,
-    offset?: number,
+    query: EsQuery<Entity>,
     options?: EsSearchOptions<Entity>,
   ): Promise<Entity[]>;
 

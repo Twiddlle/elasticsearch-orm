@@ -1,4 +1,4 @@
-import { EsFieldType } from './common';
+import { EsFieldType, EsFormat } from './common';
 
 export type EsQueryFieldsTypes<T = unknown> = Array<
   EsQueryFieldsTypeFormat<T> | EsFieldType<T> | '*' | string
@@ -6,5 +6,5 @@ export type EsQueryFieldsTypes<T = unknown> = Array<
 
 export interface EsQueryFieldsTypeFormat<T> {
   field: EsFieldType<T>;
-  format: string;
+  format: EsFormat;
 }

@@ -1,4 +1,4 @@
-import { EsFieldType, EsFieldTypes } from './common';
+import { EsFieldType, EsFieldTypes, EsRewriteTypes } from './common';
 import {
   EsQueryIntervalsAllOf,
   EsQueryIntervalsAnyOf,
@@ -35,13 +35,7 @@ export interface EsFulltextQueryMatch<T> {
       max_expansions?: number;
       prefix_length?: number;
       fuzzy_transpositions?: boolean;
-      fuzzy_rewrite?:
-        | 'constant_score'
-        | 'constant_score_boolean'
-        | 'scoring_boolean'
-        | 'top_terms_blended_freqs_N'
-        | 'top_terms_boost_N'
-        | 'top_terms_N';
+      fuzzy_rewrite?: EsRewriteTypes;
       lenient?: boolean;
       operator?: 'or' | 'and';
       minimum_should_match?: string;
@@ -128,13 +122,7 @@ export interface EsFulltextQueryMultiMatchFields<T> {
     max_expansions?: number;
     prefix_length?: number;
     fuzzy_transpositions?: boolean;
-    fuzzy_rewrite?:
-      | 'constant_score'
-      | 'constant_score_boolean'
-      | 'scoring_boolean'
-      | 'top_terms_blended_freqs_N'
-      | 'top_terms_boost_N'
-      | 'top_terms_N';
+    fuzzy_rewrite?: EsRewriteTypes;
     lenient?: boolean;
     operator?: 'or' | 'and';
     minimum_should_match?: string;

@@ -76,7 +76,7 @@ export class MetaLoader {
       const meta: EsMetaDataInterface = {
         props,
         entity: Reflect.getMetadata(EsEntity.name, Entity),
-        idPropName: idProp?.options?.name,
+        idPropName: idProp?.options?.entityPropName,
         idGenerator: idProp?.options?.generator || defaultIdGenerator,
       };
 

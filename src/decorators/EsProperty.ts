@@ -28,7 +28,6 @@ export function EsProperty(
 ): PropertyDecorator {
   return (target, name) => {
     const defaultOptions: EsPropertyFullOptions = {
-      name: name as string,
       entityPropName: name as string,
       type: 'unknown',
       additionalFieldOptions: {},

@@ -6,7 +6,6 @@ export type idGenerator = (entity) => string;
 
 export interface EsPropertyOptions {
   additionalFieldOptions?: EsFieldPropertyOptions;
-  name?: string;
   isId?: boolean;
 }
 

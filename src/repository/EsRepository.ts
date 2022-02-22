@@ -63,8 +63,6 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       body: query,
     });
 
-    console.log(123);
-
     const hits = res.body?.hits?.hits || [];
 
     return hits.map((item) => {

@@ -10,7 +10,6 @@ export class TestingClass {
   public id: string;
 
   @EsProperty('integer', {
-    name: 'Foo_2',
     additionalFieldOptions: {
       boost: 10,
     },

@@ -61,8 +61,7 @@ describe('Repository', () => {
     const foundEntity = await repository.find({
       query: {
         term: {
-          //todo: implement naming strategy conversion
-          Foo: 1,
+          foo: 1,
         },
       },
     });

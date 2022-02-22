@@ -25,15 +25,15 @@ describe('meta loader', () => {
     expect(metadata.entity.aliases[1]).toBe('test_alias_write');
 
     expect(metadata.props[0].options.type).toBe('id');
-    expect(metadata.props[0].options.name).toBe('id');
+    expect(metadata.props[0].options.entityPropName).toBe('id');
     expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[1].options.type).toBe('integer');
-    expect(metadata.props[1].options.name).toBe('Foo');
+    expect(metadata.props[1].options.entityPropName).toBe('foo');
     expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[2].options.type).toBe('boolean');
-    expect(metadata.props[2].options.name).toBe('bar');
+    expect(metadata.props[2].options.entityPropName).toBe('bar');
     expect(metadata.props[3].options.type).toBe('geo_point');
-    expect(metadata.props[3].options.name).toBe('geoPoint');
+    expect(metadata.props[3].options.entityPropName).toBe('geoPoint');
   });
 
   it('should load metadata of same class name from different file', () => {
@@ -45,15 +45,15 @@ describe('meta loader', () => {
     expect(metadata.entity.aliases[1]).toBe('test_alias_write_2');
 
     expect(metadata.props[0].options.type).toBe('id');
-    expect(metadata.props[0].options.name).toBe('id');
+    expect(metadata.props[0].options.entityPropName).toBe('id');
     expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[1].options.type).toBe('integer');
-    expect(metadata.props[1].options.name).toBe('Foo_2');
+    expect(metadata.props[1].options.entityPropName).toBe('foo2');
     expect(metadata.props[1].options.additionalFieldOptions.boost).toBe(10);
     expect(metadata.props[2].options.type).toBe('boolean');
-    expect(metadata.props[2].options.name).toBe('bar2');
+    expect(metadata.props[2].options.entityPropName).toBe('bar2');
     expect(metadata.props[3].options.type).toBe('geo_point');
-    expect(metadata.props[3].options.name).toBe('geoPoint2');
+    expect(metadata.props[3].options.entityPropName).toBe('geoPoint2');
   });
 
   it('should throw not valid entity', () => {

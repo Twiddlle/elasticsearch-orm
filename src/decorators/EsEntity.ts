@@ -23,9 +23,6 @@ export function EsEntity(
         number_of_replicas: 0,
         number_of_shards: 1,
       },
-      namingStrategy: (prop) => {
-        return prop.options.name;
-      },
       options: {
         refresh: 'wait_for',
       },

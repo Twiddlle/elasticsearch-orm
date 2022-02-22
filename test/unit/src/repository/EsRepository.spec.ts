@@ -27,7 +27,7 @@ describe('Es Repository', () => {
         body: {
           _id: '0eL8kTNJNs35P09tBGB3X',
           _source: {
-            Foo: 123,
+            foo: 123,
             bar: true,
             geoPoint: [17, 18],
           },

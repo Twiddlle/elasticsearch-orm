@@ -43,12 +43,12 @@ export class SchemaManager {
     for (const prop of props) {
       if (!prop?.options?.isId) {
         if (prop.isNested) {
-          mappingProperties[meta.entity.namingStrategy(prop)] = {
+          mappingProperties[prop.options.entityPropName] = {
             type: 'nested',
             properties: this.buildMappingProperties(prop.props, meta),
           };
         } else {
-          mappingProperties[meta.entity.namingStrategy(prop)] = {
+          mappingProperties[prop.options.entityPropName] = {
             type: prop.options.type,
             ...prop.options.additionalFieldOptions,
           };

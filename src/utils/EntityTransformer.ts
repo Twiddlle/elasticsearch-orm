@@ -41,13 +41,13 @@ export class EntityTransformer {
       }
 
       if (prop.isNested) {
-        dbEntityData[meta.entity.namingStrategy(prop)] = this.normalizeProps(
+        dbEntityData[prop.options.entityPropName] = this.normalizeProps(
           entity[prop.options.entityPropName],
           prop.props,
           meta,
         );
       } else {
-        dbEntityData[meta.entity.namingStrategy(prop)] =
+        dbEntityData[prop.options.entityPropName] =
           entity[prop.options.entityPropName];
       }
     }
@@ -88,7 +88,7 @@ export class EntityTransformer {
     }
 
     for (const prop of props) {
-      const strategyPropName = meta.entity.namingStrategy(prop);
+      const strategyPropName = prop.options.entityPropName;
       if (dbEntityData[strategyPropName] !== undefined) {
         if (prop.isNested) {
           denormalizedEntity[prop.options.entityPropName] =

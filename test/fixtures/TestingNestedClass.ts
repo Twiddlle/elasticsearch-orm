@@ -3,9 +3,7 @@ import { EsProperty } from '../../src/decorators/EsProperty';
 import { EsId } from '../../src/decorators/EsId';
 
 export class TestingImageClass {
-  @EsProperty('keyword', {
-    name: 'fullName',
-  })
+  @EsProperty('keyword')
   public name: string;
 
   @EsProperty('integer')
@@ -16,9 +14,7 @@ export class TestingAuthorClass {
   @EsProperty('keyword')
   public name: string;
 
-  @EsProperty(TestingImageClass, {
-    name: 'authorImage',
-  })
+  @EsProperty(TestingImageClass)
   public image: TestingImageClass;
 }
 
@@ -28,7 +24,6 @@ export class TestingNestedClass {
   public id: string;
 
   @EsProperty('integer', {
-    name: 'Foo',
     additionalFieldOptions: {
       boost: 10,
     },
@@ -51,7 +46,6 @@ export class TestingNestedArrayClass {
   public id: string;
 
   @EsProperty('integer', {
-    name: 'Foo',
     additionalFieldOptions: {
       boost: 10,
     },

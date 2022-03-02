@@ -1,41 +1,15 @@
 //todo: add more version of elastic queries 7.x, 8.x
-import {
-  EsFulltextQueryCombinedFields,
-  EsFulltextQueryIntervals,
-  EsFulltextQueryMatch,
-  EsFulltextQueryMatchBooleanPrefix,
-  EsFulltextQueryMatchBooleanPrefixShort,
-  EsFulltextQueryMatchPhraseQuery,
-  EsFulltextQueryMatchPhraseQueryPrefix,
-  EsFulltextQueryMatchPhraseQueryPrefixShort,
-  EsFulltextQueryMatchPhraseQueryShort,
-  EsFulltextQueryMatchShort,
-  EsFulltextQueryMultiMatchFields,
-  EsFulltextQueryString,
-  EsFulltextSimpleQueryString,
-} from './fulltextQueries';
+import { EsFulltextQueries } from './fulltextQueries';
 import { EsSortTypes } from './sort';
 import { EsSourceTypes } from './source';
 import { EsQueryFieldsTypes } from './fields';
 import { EsTermLevelQueries } from './termQueries';
-
-export interface EsFuzziness {}
+import { EsGeoQueries } from './geoQueries';
 
 export type EsQueryObject<T> =
-  | EsFulltextQueryMatch<T>
-  | EsFulltextQueryMatchShort<T>
-  | EsFulltextQueryIntervals<T>
-  | EsFulltextQueryMatchBooleanPrefix<T>
-  | EsFulltextQueryMatchBooleanPrefixShort<T>
-  | EsFulltextQueryMatchPhraseQuery<T>
-  | EsFulltextQueryMatchPhraseQueryShort<T>
-  | EsFulltextQueryMatchPhraseQueryPrefix<T>
-  | EsFulltextQueryMatchPhraseQueryPrefixShort<T>
-  | EsFulltextQueryCombinedFields<T>
-  | EsFulltextQueryMultiMatchFields<T>
-  | EsFulltextQueryString<T>
-  | EsFulltextSimpleQueryString<T>
-  | EsTermLevelQueries<T>;
+  | EsFulltextQueries<T>
+  | EsTermLevelQueries<T>
+  | EsGeoQueries<T>;
 
 export interface EsBoolQuery<T> {
   bool: Record<

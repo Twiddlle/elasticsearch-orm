@@ -100,3 +100,5 @@ export type EsFormat =
   | 'year_month_day'
   | 'strict_year_month_day'
   | string;
+
+export type EsFuzzinessType = string | number;

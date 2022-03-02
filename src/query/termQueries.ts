@@ -1,4 +1,10 @@
-import { EsFieldType, EsFieldTypes, EsFormat, EsRewriteTypes } from './common';
+import {
+  EsFieldType,
+  EsFieldTypes,
+  EsFormat,
+  EsFuzzinessType,
+  EsRewriteTypes,
+} from './common';
 
 export type EsTermLevelQueries<T> =
   | EsTermExistsQueryType<T>
@@ -34,7 +40,7 @@ export interface EsTermFuzzyQueryType<T> {
     EsFieldType<T>,
     {
       value: string;
-      fuzziness?: string;
+      fuzziness?: EsFuzzinessType;
       max_expansions?: number;
       prefix_length?: number;
       transpositions?: boolean;

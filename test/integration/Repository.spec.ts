@@ -5,6 +5,8 @@ import { Client } from '@elastic/elasticsearch';
 import { FactoryProvider } from '../../src/factory/Factory.provider';
 import { TestingClass } from '../fixtures/TestingClass';
 import { ResponseError } from '@elastic/elasticsearch/lib/errors';
+import { EsException } from '../../src/exceptions/EsException';
+import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFoundException';
 
 config({ path: path.join(__dirname, '.env') });
 
@@ -72,6 +74,60 @@ describe('Repository', () => {
     expect(foundEntity[0].geoPoint).toMatchObject([14, 15]);
   });
 
+  it('should find one entity', async () => {
+    const foundEntity = await repository.findOne({
+      query: {
+        term: {
+          foo: 1,
+        },
+      },
+    });
+
+    expect(foundEntity.id).toHaveLength(21);
+  });
+
+  it('should not find one entity', async () => {
+    const foundEntity = await repository.findOne({
+      query: {
+        term: {
+          foo: 9999999,
+        },
+      },
+    });
+
+    expect(foundEntity).toBeUndefined();
+  });
+
+  it('should find one or fail entity', async () => {
+    const foundEntity = await repository.findOneOrFail({
+      query: {
+        term: {
+          foo: 1,
+        },
+      },
+    });
+
+    expect(foundEntity.id).toHaveLength(21);
+  });
+
+  it('should not find one or fail entity', async () => {
+    let error;
+    try {
+      await repository.findOneOrFail({
+        query: {
+          term: {
+            foo: 9999999,
+          },
+        },
+      });
+    } catch (e) {
+      error = e;
+    }
+
+    expect(error).toBeInstanceOf(EsEntityNotFoundException);
+    expect(error.message).toBe('Entity not found');
+  });
+
   it('should update entity', async () => {
     const entityToUpdate = Object.assign(new TestingClass(), createdEntity, {
       foo: 2,
@@ -99,13 +155,14 @@ describe('Repository', () => {
     const res = await repository.delete(createdEntity);
     expect(res).toBeTruthy();
 
-    let error: ResponseError;
+    let error: EsException;
     try {
       await repository.findById(createdEntity.id);
     } catch (e) {
       error = e;
     }
 
-    expect(error.meta.statusCode).toBe(404);
+    expect(error).toBeInstanceOf(EsException);
+    expect((error.originalError as ResponseError).meta.statusCode).toBe(404);
   });
 });

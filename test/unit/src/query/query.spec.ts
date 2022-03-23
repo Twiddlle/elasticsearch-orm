@@ -1,4 +1,3 @@
-import { EsSortTypes } from '../../../../src/query/sort';
 import { TestingNestedClass } from '../../../fixtures/TestingNestedClass';
 import { EsQuery } from '../../../../src/query/query';
 
@@ -7,11 +6,7 @@ describe('query', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const simpleQuery1: EsQuery<TestingNestedClass> = {
       query: {
-        match: {
-          foo: {
-            query: 'test',
-          },
-        },
+        match: {},
       },
     };
 
@@ -29,8 +24,8 @@ describe('query', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const simpleQuery: EsQuery<TestingNestedClass> = {
       query: {
-        match: {
-          foo: 'fulltext foo search term',
+        exists: {
+          field: 'geo_point',
         },
       },
     };

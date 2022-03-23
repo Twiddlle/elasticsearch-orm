@@ -36,9 +36,9 @@ export interface EsRepositoryInterface<Entity> {
 
   deleteMultiple(requestBulkOptions: EsRequestBulkOptions): Promise<Entity>;
 
-  findOne(query): Promise<Entity>;
+  findOne(query: EsQuery<Entity>): Promise<Entity | undefined>;
 
-  findOneOrFail(query): Promise<Entity>;
+  findOneOrFail(query: EsQuery<Entity>): Promise<Entity>;
 
   find(
     query: EsQuery<Entity>,

@@ -3,6 +3,7 @@ import {
   ESClassFullTypeOptionsInterface,
   EsClassTypeOptionsInterface,
 } from '../types/EsClassTypeOptions.interface';
+import {EsValidationException} from "../exceptions/EsValidationException";
 
 export function EsEntity(
   index: string,
@@ -37,7 +38,7 @@ export function EsEntity(
     } else if (option1 instanceof Object) {
       entityOptions = option1;
     } else {
-      throw new Error(`Not valid elastic entity options for ${target.name}`);
+      throw new EsValidationException(`Not valid elastic entity options for ${target.name}`);
     }
 
     entityOptions = Object.assign(defaultOptions, entityOptions);

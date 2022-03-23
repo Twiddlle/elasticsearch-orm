@@ -8,6 +8,7 @@ import {
 } from '../types/EsMetaData.interface';
 import { defaultIdGenerator } from '../entity/defaultIdGenerator';
 import { EsComposedPropertyOptions } from '../types/EsPropertyOptions.intarface';
+import {EsValidationException} from "../exceptions/EsValidationException";
 
 export class MetaLoader {
   private static instance: MetaLoader;
@@ -39,7 +40,7 @@ export class MetaLoader {
       if (prop.type === 'nested') {
         metaProp.isNested = true;
 
-        const notValidNestedErr = new Error(
+        const notValidNestedErr = new EsValidationException(
           `Not valid nested entity for prop ${prop.entityPropName} in entity ${Entity.name}.`,
         );
         if (!prop.entity) {
@@ -65,7 +66,7 @@ export class MetaLoader {
       for (const prop of props) {
         if (prop.options.isId) {
           if (idProp) {
-            throw new Error(
+            throw new EsValidationException(
               `Entity ${Entity.name} has defined multiple identifiers.`,
             );
           }
@@ -92,10 +93,10 @@ export class MetaLoader {
     metaData: Partial<EsMetaDataInterface>,
   ) {
     if (!metaData || !metaData.entity || !metaData.props) {
-      throw new Error(`${entityName} is not valid elastic entity`);
+      throw new EsValidationException(`${entityName} is not valid elastic entity`);
     }
     if (!metaData.idPropName) {
-      throw new Error(
+      throw new EsValidationException(
         `Entity ${entityName} does not have specified id property. Use @EsId decorator or set isId on true.`,
       );
     }

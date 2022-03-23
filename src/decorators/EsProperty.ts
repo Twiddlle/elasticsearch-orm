@@ -7,6 +7,7 @@ import {
   EsPropertyTypedOptions,
 } from '../types/EsPropertyOptions.intarface';
 import { ClassType } from '../types/Class.type';
+import {EsValidationException} from "../exceptions/EsValidationException";
 
 export function EsProperty(
   entity: ClassType<unknown>,
@@ -49,7 +50,7 @@ export function EsProperty(
     } else if (option1 instanceof Object) {
       propertyOptions = Object.assign(defaultOptions, option1);
     } else {
-      throw new Error(
+      throw new EsValidationException(
         `Not valid elastic property options for ${name as string}`,
       );
     }

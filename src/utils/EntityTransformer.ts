@@ -5,13 +5,14 @@ import {
   EsMetaDataInterface,
   EsPropsMetaDataInterface,
 } from '../types/EsMetaData.interface';
+import {EsValidationException} from "../exceptions/EsValidationException";
 
 export class EntityTransformer {
   constructor(private readonly metaLoader: MetaLoader) {}
 
   normalize(entity: unknown): NormalizedEntity {
     if (!(entity instanceof Object)) {
-      throw new Error('Not valid entity to normalize');
+      throw new EsValidationException('Not valid entity to normalize');
     }
     const metaData = this.getMeta(entity);
     const dbEntity: NormalizedEntity = {
@@ -110,7 +111,7 @@ export class EntityTransformer {
   private getMeta(entity) {
     const metaData = this.metaLoader.getReflectMetaData(entity.constructor);
     if (!metaData || !metaData.entity || !metaData.props) {
-      throw new Error(`${entity.constructor.name} is not valid elastic entity`);
+      throw new EsValidationException(`${entity.constructor.name} is not valid elastic entity`);
     }
     return metaData;
   }

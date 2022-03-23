@@ -144,7 +144,7 @@ describe('Repository', () => {
       foo: 3,
     });
     delete entityToUpdate.bar;
-    const entity = await repository.save(entityToUpdate);
+    const entity = await repository.index(entityToUpdate);
     expect(entity.id).toHaveLength(21);
     expect(entity.foo).toBe(3);
     expect(entity.bar).toBeUndefined();
@@ -164,5 +164,108 @@ describe('Repository', () => {
 
     expect(error).toBeInstanceOf(EsException);
     expect((error.originalError as ResponseError).meta.statusCode).toBe(404);
+  });
+
+  it('should create multiple entities', async () => {
+    const entities = [
+      Object.assign(new TestingClass(), { foo: 555 }),
+      Object.assign(new TestingClass(), { foo: 556 }),
+      Object.assign(new TestingClass(), { foo: 557 }),
+    ];
+    const createdEntities = await repository.createMultiple(entities);
+    expect(createdEntities.items).toHaveLength(3);
+    expect(createdEntities.hasErrors).toBeFalsy();
+    expect(createdEntities.rawRes.body.items).toHaveLength(3);
+    expect(createdEntities.items[0].id).toHaveLength(21);
+    expect(createdEntities.items[0].foo).toBe(555);
+    expect(createdEntities.items[1].id).toHaveLength(21);
+    expect(createdEntities.items[1].foo).toBe(556);
+    expect(createdEntities.items[2].id).toHaveLength(21);
+    expect(createdEntities.items[2].foo).toBe(557);
+  });
+
+  it('should not create multiple entities with no data provided', async () => {
+    let error;
+    try {
+      await repository.createMultiple([]);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeInstanceOf(EsException);
+    expect((error.originalError as ResponseError).message).toBe(
+      'parse_exception: [parse_exception] Reason: request body is required',
+    );
+  });
+
+  it('should create partially multiple entities', async () => {
+    const multiRes = await repository.createMultiple([
+      Object.assign(new TestingClass(), { foo: 555 }),
+      Object.assign(new TestingClass(), { foo: { x: 1 } }),
+    ]);
+    expect(multiRes.hasErrors).toBe(true);
+    expect(multiRes.items).toHaveLength(1);
+    expect(multiRes.items[0].foo).toBe(555);
+  });
+
+  it('should update multiple entities', async () => {
+    const entities = [
+      Object.assign(new TestingClass(), { foo: 653 }),
+      Object.assign(new TestingClass(), { foo: 654 }),
+    ];
+    const createdEntities = await repository.createMultiple(entities);
+    const updatedEntities = await repository.updateMultiple([
+      Object.assign(createdEntities.items[0], { foo: 111 }),
+      Object.assign(createdEntities.items[1], { foo: 222 }),
+    ]);
+    expect(updatedEntities.items).toHaveLength(2);
+    expect(updatedEntities.hasErrors).toBeFalsy();
+    expect(updatedEntities.rawRes.body.items).toHaveLength(2);
+    expect(updatedEntities.items[0].id).toHaveLength(21);
+    expect(updatedEntities.items[0].foo).toBe(111);
+    expect(updatedEntities.items[1].id).toHaveLength(21);
+    expect(updatedEntities.items[1].foo).toBe(222);
+  });
+
+  it('should save multiple entities', async () => {
+    const entities = [
+      Object.assign(new TestingClass(), { foo: 653 }),
+      Object.assign(new TestingClass(), { foo: 654 }),
+    ];
+    const createdEntities = await repository.createMultiple(entities);
+    expect(createdEntities.items[0].bar).toBeUndefined();
+    expect(createdEntities.items[1].bar).toBeUndefined();
+    const savedEntities = await repository.indexMultiple([
+      Object.assign(createdEntities.items[0], { bar: true, foo: undefined }),
+      Object.assign(createdEntities.items[1], { bar: false, foo: undefined }),
+    ]);
+    expect(savedEntities.items).toHaveLength(2);
+    expect(savedEntities.hasErrors).toBeFalsy();
+    expect(savedEntities.rawRes.body.items).toHaveLength(2);
+    expect(savedEntities.items[0].id).toHaveLength(21);
+    expect(savedEntities.items[0].foo).toBeUndefined();
+    expect(savedEntities.items[1].id).toHaveLength(21);
+    expect(savedEntities.items[1].foo).toBeUndefined();
+  });
+
+  it('should delete multiple entities', async () => {
+    const entities = [
+      Object.assign(new TestingClass(), { foo: 999 }),
+      Object.assign(new TestingClass(), { foo: 1000 }),
+    ];
+    const createdEntities = await repository.createMultiple(entities);
+    const ids = createdEntities.items.map((entity) => entity.id);
+    const deletedRes = await repository.deleteMultiple(ids);
+    expect(deletedRes.rawRes.body.items).toHaveLength(2);
+    expect(deletedRes.hasErrors).toBeFalsy();
+
+    const verifyDeletion = await repository.find({
+      query: {
+        ids: {
+          values: ids,
+        },
+      },
+    });
+
+    expect(verifyDeletion).toHaveLength(0);
   });
 });

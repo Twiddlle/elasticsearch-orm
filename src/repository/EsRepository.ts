@@ -1,6 +1,5 @@
 import {
   EsRepositoryInterface,
-  EsRequestBulkOptions,
   EsSearchOptions,
 } from './EsRepository.interface';
 import { Client } from '@elastic/elasticsearch';
@@ -11,6 +10,12 @@ import { EsMappingInterface } from '../types/EsMapping.interface';
 import { EsQuery } from '../query/query';
 import { EsEntityNotFoundException } from '../exceptions/EsEntityNotFoundException';
 import { handleEsException } from '../utils/common';
+import { EsException } from '../exceptions/EsException';
+import { EsTermIdsQueryType } from '../query/termQueries';
+import {
+  EsBulkResponseInterface,
+  EsDeleteBulkResponseInterface,
+} from './EsBulkResponse.interface';
 
 export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
@@ -34,11 +39,10 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     return this.findById(dbEntity.id);
   }
 
-  createMultiple(
+  async createMultiple(
     entities: Entity[],
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity[]> {
-    return Promise.resolve([]);
+  ): Promise<EsBulkResponseInterface<Entity>> {
+    return this.makeBulkRequest(entities, 'create');
   }
 
   async delete(entity: Entity): Promise<true> {
@@ -55,8 +59,34 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     }
   }
 
-  deleteMultiple(requestBulkOptions: EsRequestBulkOptions): Promise<Entity> {
-    return Promise.resolve(undefined);
+  async deleteMultiple(
+    ids: string[],
+  ): Promise<EsDeleteBulkResponseInterface<Entity>> {
+    const bulkRequestBody = [];
+    const index = this.metaLoader.getIndex(this.Entity);
+
+    try {
+      for (const id of ids) {
+        bulkRequestBody.push({
+          delete: {
+            _index: index,
+            _id: id,
+          },
+        });
+      }
+
+      const bulkRes = await this.client.bulk({
+        refresh: true,
+        body: bulkRequestBody,
+      });
+
+      return {
+        rawRes: bulkRes,
+        hasErrors: !!bulkRes.body.errors,
+      };
+    } catch (e) {
+      handleEsException(e);
+    }
   }
 
   async find(
@@ -129,14 +159,11 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     }
   }
 
-  updateMultiple(
-    entities: Entity[],
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity[]> {
-    return Promise.resolve([]);
+  updateMultiple(entities: Entity[]): Promise<EsBulkResponseInterface<Entity>> {
+    return this.makeBulkRequest(entities, 'update');
   }
 
-  async save(entity: Entity): Promise<Entity> {
+  async index(entity: Entity): Promise<Entity> {
     try {
       const dbEntity = this.entityTransformer.normalize(entity);
       await this.client.index({
@@ -154,14 +181,11 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     }
   }
 
-  saveMultiple(
-    entities: Entity[],
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity[]> {
-    return Promise.resolve([]);
+  indexMultiple(entities: Entity[]): Promise<EsBulkResponseInterface<Entity>> {
+    return this.makeBulkRequest(entities, 'index');
   }
 
-  async createIndex<Entity>(indexInterface: EsIndexInterface): Promise<void> {
+  async createIndex(indexInterface: EsIndexInterface): Promise<void> {
     try {
       await this.client.indices.create({
         index: this.metaLoader.getIndex(this.Entity),
@@ -201,5 +225,59 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     return this.metaLoader.getReflectMetaData(
       entity.constructor as ClassType<Entity>,
     ).entity.options.refresh;
+  }
+
+  private async makeBulkRequest(
+    entities: Entity[],
+    type: 'create' | 'index' | 'update',
+  ): Promise<EsBulkResponseInterface<Entity>> {
+    const bulkRequestBody = [];
+    const indices = new Set();
+
+    const query: EsQuery<Entity> = {
+      query: {
+        ids: {
+          values: [],
+        },
+      },
+    };
+
+    try {
+      for (const entity of entities) {
+        const index = this.getIndex(entity);
+        indices.add(index);
+        const dbEntity = this.entityTransformer.normalize(entity);
+        (query.query as EsTermIdsQueryType).ids.values.push(dbEntity.id);
+        bulkRequestBody.push({
+          [type]: {
+            _index: index,
+            _id: dbEntity.id,
+          },
+        });
+        bulkRequestBody.push(
+          type === 'update' ? { doc: dbEntity.data } : dbEntity.data,
+        );
+      }
+
+      if (indices.size > 1) {
+        throw new EsException(
+          'Bulk requests with multiple indices are not supported yet',
+        );
+      }
+
+      const bulkRes = await this.client.bulk({
+        refresh: true,
+        body: bulkRequestBody,
+      });
+
+      query.size = (query.query as EsTermIdsQueryType).ids.values.length;
+      return {
+        items: await this.find(query),
+        rawRes: bulkRes,
+        hasErrors: !!bulkRes.body.errors,
+      };
+    } catch (e) {
+      handleEsException(e);
+    }
   }
 }

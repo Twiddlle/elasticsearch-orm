@@ -1,6 +1,10 @@
 import { EsIndexInterface } from '../types/EsIndex.interface';
 import { EsMappingInterface } from '../types/EsMapping.interface';
 import { EsQuery } from '../query/query';
+import {
+  EsBulkResponseInterface,
+  EsDeleteBulkResponseInterface,
+} from './EsBulkResponse.interface';
 
 export interface EsRequestBulkOptions {
   throwException?: true;
@@ -13,28 +17,19 @@ export interface EsSearchOptions<T, U = keyof T> {
 export interface EsRepositoryInterface<Entity> {
   create(entity: Entity): Promise<Entity>;
 
-  createMultiple(
-    entities: Entity[],
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity[]>;
+  createMultiple(entities: Entity[]): Promise<EsBulkResponseInterface<Entity>>;
 
   update(entity: Entity): Promise<Entity>;
 
-  updateMultiple(
-    entities: Entity[],
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity[]>;
+  updateMultiple(entities: Entity[]): Promise<EsBulkResponseInterface<Entity>>;
 
-  save(entity: Entity): Promise<Entity>;
+  index(entity: Entity): Promise<Entity>;
 
-  saveMultiple(
-    entities: Entity[],
-    requestBulkOptions: EsRequestBulkOptions,
-  ): Promise<Entity[]>;
+  indexMultiple(entities: Entity[]): Promise<EsBulkResponseInterface<Entity>>;
 
   delete(entity: Entity): Promise<true>;
 
-  deleteMultiple(requestBulkOptions: EsRequestBulkOptions): Promise<Entity>;
+  deleteMultiple(ids: string[]): Promise<EsDeleteBulkResponseInterface<Entity>>;
 
   findOne(query: EsQuery<Entity>): Promise<Entity | undefined>;
 

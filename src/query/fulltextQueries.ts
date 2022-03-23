@@ -1,4 +1,9 @@
-import { EsFieldType, EsFieldTypes, EsRewriteTypes } from './common';
+import {
+  EsFieldType,
+  EsFieldTypes,
+  EsFuzzinessType,
+  EsRewriteTypes,
+} from './common';
 import {
   EsQueryIntervalsAllOf,
   EsQueryIntervalsAnyOf,
@@ -7,7 +12,21 @@ import {
   EsQueryIntervalsPrefix,
   EsQueryIntervalsWildcard,
 } from './intervals';
-import { EsFuzziness } from './query';
+
+export type EsFulltextQueries<T> =
+  | EsFulltextQueryMatch<T>
+  | EsFulltextQueryMatchShort<T>
+  | EsFulltextQueryIntervals<T>
+  | EsFulltextQueryMatchBooleanPrefix<T>
+  | EsFulltextQueryMatchBooleanPrefixShort<T>
+  | EsFulltextQueryMatchPhraseQuery<T>
+  | EsFulltextQueryMatchPhraseQueryShort<T>
+  | EsFulltextQueryMatchPhraseQueryPrefix<T>
+  | EsFulltextQueryMatchPhraseQueryPrefixShort<T>
+  | EsFulltextQueryCombinedFields<T>
+  | EsFulltextQueryMultiMatchFields<T>
+  | EsFulltextQueryString<T>
+  | EsFulltextSimpleQueryString<T>;
 
 export interface EsFulltextQueryIntervals<T> {
   intervals: Record<
@@ -31,7 +50,7 @@ export interface EsFulltextQueryMatch<T> {
       query: string;
       analyzer?: string;
       auto_generate_synonyms_phrase_query?: boolean;
-      fuzziness?: EsFuzziness;
+      fuzziness?: EsFuzzinessType;
       max_expansions?: number;
       prefix_length?: number;
       fuzzy_transpositions?: boolean;
@@ -118,7 +137,7 @@ export interface EsFulltextQueryMultiMatchFields<T> {
     boost?: number;
     tie_breaker?: number;
     auto_generate_synonyms_phrase_query?: boolean;
-    fuzziness?: EsFuzziness;
+    fuzziness?: EsFuzzinessType;
     max_expansions?: number;
     prefix_length?: number;
     fuzzy_transpositions?: boolean;
@@ -142,7 +161,7 @@ export interface EsFulltextQueryString<T> {
     default_operator?: 'or' | 'and';
     enable_position_increments?: boolean;
     fields?: EsFieldTypes<T>;
-    fuzziness?: EsFuzziness;
+    fuzziness?: EsFuzzinessType;
     fuzzy_max_expansions?: number;
     fuzzy_prefix_length?: number;
     fuzzy_transpositions?: boolean;

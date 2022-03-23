@@ -22,10 +22,22 @@ describe('query', () => {
 
   it('complex', () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const simpleQuery: EsQuery<TestingNestedClass> = {
+    const query: EsQuery<TestingNestedClass> = {
       query: {
         exists: {
           field: 'geo_point',
+        },
+      },
+    };
+  });
+
+  it('geo', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const query: EsQuery<TestingNestedClass> = {
+      query: {
+        geo_distance: {
+          foo: [1, 2],
+          distance: '20km',
         },
       },
     };

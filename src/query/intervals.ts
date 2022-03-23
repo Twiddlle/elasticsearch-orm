@@ -1,5 +1,5 @@
 import { EsIntervalFilter } from './filter';
-import { EsFieldType } from './common';
+import { EsFieldType, EsFuzzinessType } from './common';
 
 export interface EsQueryIntervalsMatch<T> {
   query: string;
@@ -26,7 +26,7 @@ export interface EsQueryIntervalsFuzzy<T> {
   term: string;
   prefix_length?: number;
   transpositions?: boolean;
-  fuzziness?: string;
+  fuzziness?: EsFuzzinessType;
   analyzer?: string;
   use_field?: string | EsFieldType<T>;
 }

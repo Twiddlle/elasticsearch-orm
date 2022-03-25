@@ -58,7 +58,7 @@ describe('RepositoryNestedArray', () => {
     entity.author[1].image.name = 'me myself and I';
     entity.author[1].image.size = 3598;
     entity.author[1].name = 'Hank';
-    createdEntity = await repository.create(entity);
+    createdEntity = (await repository.create(entity)).entity;
     expect(createdEntity.id).toHaveLength(21);
     expect(createdEntity.foo).toMatchObject([1, 2, 3]);
     expect(createdEntity.image).toBeInstanceOf(TestingImageClass);

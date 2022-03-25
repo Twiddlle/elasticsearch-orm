@@ -8,7 +8,8 @@ import {
 } from '../types/EsMetaData.interface';
 import { defaultIdGenerator } from '../entity/defaultIdGenerator';
 import { EsComposedPropertyOptions } from '../types/EsPropertyOptions.intarface';
-import {EsValidationException} from "../exceptions/EsValidationException";
+import { EsValidationException } from '../exceptions/EsValidationException';
+import { EsQuery } from '../query/query';
 
 export class MetaLoader {
   private static instance: MetaLoader;
@@ -93,7 +94,9 @@ export class MetaLoader {
     metaData: Partial<EsMetaDataInterface>,
   ) {
     if (!metaData || !metaData.entity || !metaData.props) {
-      throw new EsValidationException(`${entityName} is not valid elastic entity`);
+      throw new EsValidationException(
+        `${entityName} is not valid elastic entity`,
+      );
     }
     if (!metaData.idPropName) {
       throw new EsValidationException(
@@ -102,8 +105,16 @@ export class MetaLoader {
     }
   }
 
-  public getIndex<T>(Entity: ClassType<T>) {
-    return this.getReflectMetaData(Entity).entity.index;
+  public getIndex<T = any>(Entity?: ClassType<T> | T, query?: EsQuery) {
+    const entity = Entity instanceof Object ? Entity : undefined;
+    const entityClass =
+      typeof Entity === 'function' ? Entity : (Entity.constructor as any);
+    const index = this.getReflectMetaData(entityClass).entity.index;
+
+    if (typeof index === 'function') {
+      return index(entity, query);
+    }
+    return index;
   }
 
   public getIdPropName<T>(Entity: ClassType<T>) {

@@ -3,20 +3,20 @@ import * as path from 'path';
 import { EsRepository } from '../../src/repository/EsRepository';
 import { Client } from '@elastic/elasticsearch';
 import { FactoryProvider } from '../../src/factory/Factory.provider';
-import { TestingClass } from '../fixtures/TestingClass';
+import { TestingClassWithIndexFn } from '../fixtures/TestingClassWithIndexFn';
 import { ResponseError } from '@elastic/elasticsearch/lib/errors';
 import { EsException } from '../../src/exceptions/EsException';
 import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFoundException';
 
 config({ path: path.join(__dirname, '.env') });
 
-describe('Repository', () => {
-  let repository: EsRepository<TestingClass>;
-  let createdEntity: TestingClass;
+describe('RepositoryAliases', () => {
+  let repository: EsRepository<TestingClassWithIndexFn>;
+  let createdEntity: TestingClassWithIndexFn;
 
   beforeAll(async () => {
     repository = new EsRepository(
-      TestingClass,
+      TestingClassWithIndexFn,
       new Client({
         nodes: [process.env.ELASTIC_HOST],
         auth: {
@@ -27,8 +27,9 @@ describe('Repository', () => {
     );
 
     try {
-      const schema =
-        FactoryProvider.makeSchemaManager().generateIndexSchema(TestingClass);
+      const schema = FactoryProvider.makeSchemaManager().generateIndexSchema(
+        TestingClassWithIndexFn,
+      );
       await repository.createIndex(schema);
     } catch (e) {
       console.warn(e.message);
@@ -40,7 +41,7 @@ describe('Repository', () => {
   });
 
   it('should create entity', async () => {
-    const entity = new TestingClass();
+    const entity = new TestingClassWithIndexFn();
     entity.foo = 1;
     entity.bar = true;
     entity.geoPoint = [14, 15];
@@ -130,9 +131,13 @@ describe('Repository', () => {
   });
 
   it('should update entity', async () => {
-    const entityToUpdate = Object.assign(new TestingClass(), createdEntity, {
-      foo: 2,
-    });
+    const entityToUpdate = Object.assign(
+      new TestingClassWithIndexFn(),
+      createdEntity,
+      {
+        foo: 2,
+      },
+    );
     const entity = await repository.update(entityToUpdate);
     expect(entity.entity.id).toHaveLength(21);
     expect(entity.entity.foo).toBe(2);
@@ -141,9 +146,13 @@ describe('Repository', () => {
   });
 
   it('should index entity', async () => {
-    const entityToUpdate = Object.assign(new TestingClass(), createdEntity, {
-      foo: 3,
-    });
+    const entityToUpdate = Object.assign(
+      new TestingClassWithIndexFn(),
+      createdEntity,
+      {
+        foo: 3,
+      },
+    );
     delete entityToUpdate.bar;
     const entity = await repository.index(entityToUpdate);
     expect(entity.entity.id).toHaveLength(21);
@@ -169,9 +178,9 @@ describe('Repository', () => {
 
   it('should create multiple entities', async () => {
     const entities = [
-      Object.assign(new TestingClass(), { foo: 555 }),
-      Object.assign(new TestingClass(), { foo: 556 }),
-      Object.assign(new TestingClass(), { foo: 557 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 555 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 556 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 557 }),
     ];
     const createdEntities = await repository.createMultiple(entities);
     expect(createdEntities.entities).toHaveLength(3);
@@ -200,8 +209,8 @@ describe('Repository', () => {
 
   it('should create partially multiple entities', async () => {
     const multiRes = await repository.createMultiple([
-      Object.assign(new TestingClass(), { foo: 555 }),
-      Object.assign(new TestingClass(), { foo: { x: 1 } }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 555 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: { x: 1 } }),
     ]);
     expect(multiRes.hasErrors).toBe(true);
     expect(multiRes.entities).toHaveLength(1);
@@ -210,8 +219,8 @@ describe('Repository', () => {
 
   it('should update multiple entities', async () => {
     const entities = [
-      Object.assign(new TestingClass(), { foo: 653 }),
-      Object.assign(new TestingClass(), { foo: 654 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 653 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 654 }),
     ];
     const createdEntities = await repository.createMultiple(entities);
     const updatedEntities = await repository.updateMultiple([
@@ -229,8 +238,8 @@ describe('Repository', () => {
 
   it('should save multiple entities', async () => {
     const entities = [
-      Object.assign(new TestingClass(), { foo: 653 }),
-      Object.assign(new TestingClass(), { foo: 654 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 653 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 654 }),
     ];
     const createdEntities = await repository.createMultiple(entities);
     expect(createdEntities.entities[0].bar).toBeUndefined();
@@ -253,8 +262,8 @@ describe('Repository', () => {
 
   it('should delete multiple entities', async () => {
     const entities = [
-      Object.assign(new TestingClass(), { foo: 999 }),
-      Object.assign(new TestingClass(), { foo: 1000 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 999 }),
+      Object.assign(new TestingClassWithIndexFn(), { foo: 1000 }),
     ];
     const createdEntities = await repository.createMultiple(entities);
     const ids = createdEntities.entities.map((entity) => entity.id);

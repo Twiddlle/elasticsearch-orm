@@ -14,8 +14,10 @@ import { EsException } from '../exceptions/EsException';
 import { EsTermIdsQueryType } from '../query/termQueries';
 import {
   EsBulkResponseInterface,
+  EsCollectionResponseInterface,
   EsDeleteBulkResponseInterface,
-} from './EsBulkResponse.interface';
+  EsResponseInterface,
+} from './EsBulkResponseInterface';
 
 export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
@@ -26,17 +28,21 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     private readonly client: Client,
   ) {}
 
-  async create(entity: Entity): Promise<Entity> {
+  async create(entity: Entity): Promise<EsResponseInterface<Entity>> {
     const dbEntity = this.entityTransformer.normalize(entity);
 
-    await this.client.create({
+    const esRes = await this.client.create({
       index: this.getIndex(entity),
       id: dbEntity.id,
       refresh: this.getRefreshOption(entity),
       body: dbEntity.data,
     });
 
-    return this.findById(dbEntity.id);
+    const found = await this.findById(dbEntity.id);
+    return {
+      entity: found.entity,
+      raw: esRes,
+    };
   }
 
   async createMultiple(
@@ -81,7 +87,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       });
 
       return {
-        rawRes: bulkRes,
+        raw: bulkRes,
         hasErrors: !!bulkRes.body.errors,
       };
     } catch (e) {
@@ -92,68 +98,80 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   async find(
     query: EsQuery<Entity>,
     options?: EsSearchOptions<Entity>,
-  ): Promise<Entity[]> {
+  ): Promise<EsCollectionResponseInterface<Entity>> {
     try {
       const res = await this.client.search({
-        index: this.metaLoader.getIndex(this.Entity),
+        index: this.metaLoader.getIndex(this.Entity, query as any),
         _source: options?.source as string[],
         body: query,
       });
 
       const hits = res.body?.hits?.hits || [];
 
-      return hits.map((item) => {
-        return this.entityTransformer.denormalize(this.Entity, {
-          id: item._id,
-          data: item?._source || {},
-        });
-      });
+      return {
+        raw: res,
+        entities: hits.map((item) => {
+          return this.entityTransformer.denormalize(this.Entity, {
+            id: item._id,
+            data: item?._source || {},
+          });
+        }),
+      };
     } catch (e) {
       handleEsException(e);
     }
   }
 
-  async findById(id: string): Promise<Entity> {
+  async findById(id: string): Promise<EsResponseInterface<Entity>> {
     try {
       const esRes = await this.client.get({
         index: this.metaLoader.getIndex(this.Entity),
         id: id,
       });
 
-      return this.entityTransformer.denormalize(this.Entity, {
-        id: esRes.body._id,
-        data: esRes.body._source,
-      });
+      return {
+        raw: esRes,
+        entity: this.entityTransformer.denormalize(this.Entity, {
+          id: esRes.body._id,
+          data: esRes.body._source,
+        }),
+      };
     } catch (e) {
       handleEsException(e);
     }
   }
 
-  async findOne(query: EsQuery<Entity>): Promise<Entity> {
-    const entities = await this.find({ ...query, size: 1 });
-    return entities[0];
+  async findOne(query: EsQuery<Entity>): Promise<EsResponseInterface<Entity>> {
+    const res = await this.find({ ...query, size: 1 });
+    return {
+      raw: res.raw,
+      entity: res.entities[0],
+    };
   }
 
-  async findOneOrFail(query: EsQuery<Entity>): Promise<Entity> {
-    const entity = await this.findOne(query);
-    if (!entity) {
+  async findOneOrFail(
+    query: EsQuery<Entity>,
+  ): Promise<EsResponseInterface<Entity>> {
+    const res = await this.findOne(query);
+    if (!res.entity) {
       throw new EsEntityNotFoundException();
     }
-    return entity;
+    return res;
   }
 
-  async update(entity: Entity): Promise<Entity> {
+  async update(entity: Entity): Promise<EsResponseInterface<Entity>> {
     try {
       const dbEntity = this.entityTransformer.normalize(entity);
 
-      await this.client.update({
-        index: this.getIndex(entity),
-        id: dbEntity.id,
-        refresh: this.getRefreshOption(entity),
-        body: { doc: dbEntity.data },
-      });
-
-      return this.findById(dbEntity.id);
+      return {
+        raw: await this.client.update({
+          index: this.getIndex(entity),
+          id: dbEntity.id,
+          refresh: this.getRefreshOption(entity),
+          body: { doc: dbEntity.data },
+        }),
+        entity: (await this.findById(dbEntity.id)).entity,
+      };
     } catch (e) {
       handleEsException(e);
     }
@@ -163,19 +181,22 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     return this.makeBulkRequest(entities, 'update');
   }
 
-  async index(entity: Entity): Promise<Entity> {
+  async index(entity: Entity): Promise<EsResponseInterface<Entity>> {
     try {
       const dbEntity = this.entityTransformer.normalize(entity);
-      await this.client.index({
-        index: this.getIndex(entity),
-        id: dbEntity.id,
-        refresh: this.getRefreshOption(entity),
-        body: dbEntity.data,
-      });
-      return this.entityTransformer.denormalize(
-        entity.constructor as ClassType<Entity>,
-        dbEntity,
-      );
+
+      return {
+        raw: await this.client.index({
+          index: this.getIndex(entity),
+          id: dbEntity.id,
+          refresh: this.getRefreshOption(entity),
+          body: dbEntity.data,
+        }),
+        entity: this.entityTransformer.denormalize(
+          entity.constructor as ClassType<Entity>,
+          dbEntity,
+        ),
+      };
     } catch (e) {
       handleEsException(e);
     }
@@ -217,8 +238,8 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     }
   }
 
-  private getIndex<Entity>(entity: Entity) {
-    return this.metaLoader.getIndex(entity.constructor as ClassType<Entity>);
+  private getIndex<Entity>(entity: Entity, query?: EsQuery) {
+    return this.metaLoader.getIndex(entity, query);
   }
 
   private getRefreshOption<Entity>(entity: Entity) {
@@ -272,8 +293,8 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
       query.size = (query.query as EsTermIdsQueryType).ids.values.length;
       return {
-        items: await this.find(query),
-        rawRes: bulkRes,
+        entities: (await this.find(query)).entities,
+        raw: bulkRes,
         hasErrors: !!bulkRes.body.errors,
       };
     } catch (e) {

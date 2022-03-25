@@ -40,9 +40,9 @@ describe('Es Repository', () => {
     entityToCreate.bar = true;
     entityToCreate.geoPoint = [17, 18];
     const createdEntity = await repository.create(entityToCreate);
-    expect(createdEntity.id).toBe('0eL8kTNJNs35P09tBGB3X');
-    expect(createdEntity.foo).toBe(123);
-    expect(createdEntity.bar).toBe(true);
-    expect(createdEntity.geoPoint).toMatchObject([17, 18]);
+    expect(createdEntity.entity.id).toBe('0eL8kTNJNs35P09tBGB3X');
+    expect(createdEntity.entity.foo).toBe(123);
+    expect(createdEntity.entity.bar).toBe(true);
+    expect(createdEntity.entity.geoPoint).toMatchObject([17, 18]);
   });
 });

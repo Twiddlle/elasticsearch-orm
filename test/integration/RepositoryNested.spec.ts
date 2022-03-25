@@ -55,15 +55,17 @@ describe('RepositoryNested', () => {
     entity.author.image.name = 'profile pic';
     entity.author.image.size = 2895;
     entity.author.name = 'Jason';
-    createdEntity = await repository.create(entity);
-    expect(createdEntity.id).toHaveLength(21);
-    expect(createdEntity.foo).toBe(1);
-    expect(createdEntity.image).toBeInstanceOf(TestingImageClass);
-    expect(createdEntity.image.name).toBe('x');
-    expect(createdEntity.image.size).toBe(1024);
-    expect(createdEntity.author).toBeInstanceOf(TestingAuthorClass);
-    expect(createdEntity.author.name).toBe('Jason');
-    expect(createdEntity.author.image.name).toBe('profile pic');
-    expect(createdEntity.author.image.size).toBe(2895);
+    const createdNestedEntity = await repository.create(entity);
+    expect(createdNestedEntity.entity.id).toHaveLength(21);
+    expect(createdNestedEntity.entity.foo).toBe(1);
+    expect(createdNestedEntity.entity.image).toBeInstanceOf(TestingImageClass);
+    expect(createdNestedEntity.entity.image.name).toBe('x');
+    expect(createdNestedEntity.entity.image.size).toBe(1024);
+    expect(createdNestedEntity.entity.author).toBeInstanceOf(
+      TestingAuthorClass,
+    );
+    expect(createdNestedEntity.entity.author.name).toBe('Jason');
+    expect(createdNestedEntity.entity.author.image.name).toBe('profile pic');
+    expect(createdNestedEntity.entity.author.image.size).toBe(2895);
   });
 });

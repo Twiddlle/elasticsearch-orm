@@ -8,13 +8,33 @@ import {
   EsResponseInterface,
 } from './EsBulkResponseInterface';
 
-export interface EsRequestBulkOptions {
-  throwException?: true;
+export interface EsSearchParams<T, U = keyof T> {
+  [key: string]: any;
+  source?: U[] | string[] | string;
 }
 
-export interface EsSearchOptions<T, U = keyof T> {
-  source?: U[] | string[];
-}
+export type EsMiddlewareTypes = 'beforeRequest';
+
+export type EsActionTypes =
+  | 'create'
+  | 'createMultiple'
+  | 'update'
+  | 'updateMultiple'
+  | 'index'
+  | 'indexMultiple'
+  | 'delete'
+  | 'deleteMultiple'
+  | 'find'
+  | 'findById'
+  | 'createIndex'
+  | 'deleteIndex'
+  | 'updateMapping';
+
+export type EsMiddlewareFunction = (
+  action: EsActionTypes,
+  esParams,
+  args: any[],
+) => void;
 
 export interface EsRepositoryInterface<Entity> {
   create(entity: Entity): Promise<EsResponseInterface<Entity>>;
@@ -41,7 +61,7 @@ export interface EsRepositoryInterface<Entity> {
 
   find(
     query: EsQuery<Entity>,
-    options?: EsSearchOptions<Entity>,
+    params?: EsSearchParams<Entity>,
   ): Promise<EsCollectionResponseInterface<Entity>>;
 
   findById(id: string): Promise<EsResponseInterface<Entity>>;

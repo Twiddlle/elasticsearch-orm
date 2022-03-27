@@ -26,6 +26,12 @@ describe('Repository', () => {
       }),
     );
 
+    repository.on('beforeRequest', (action, esParams, args) => {
+      if (action === 'find') {
+        esParams.explain = true;
+      }
+    });
+
     try {
       const schema =
         FactoryProvider.makeSchemaManager().generateIndexSchema(TestingClass);
@@ -69,10 +75,31 @@ describe('Repository', () => {
       },
     });
 
+    expect(foundEntity.raw.body.hits.hits[0]._explanation).toBeDefined();
     expect(foundEntity.entities[0].id).toHaveLength(21);
     expect(foundEntity.entities[0].foo).toBe(1);
     expect(foundEntity.entities[0].bar).toBe(true);
     expect(foundEntity.entities[0].geoPoint).toMatchObject([14, 15]);
+  });
+
+  it('should find entity with extra params', async () => {
+    const foundEntity = await repository.find(
+      {
+        query: {
+          term: {
+            foo: 1,
+          },
+        },
+      },
+      {
+        _source: ['foo'],
+      },
+    );
+
+    expect(foundEntity.entities[0].id).toHaveLength(21);
+    expect(foundEntity.entities[0].foo).toBe(1);
+    expect(foundEntity.entities[0].bar).toBeUndefined();
+    expect(foundEntity.entities[0].geoPoint).toBeUndefined();
   });
 
   it('should find one entity', async () => {

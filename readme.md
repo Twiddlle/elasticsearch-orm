@@ -17,20 +17,12 @@ npm i elastic-orm @elastic/elasticsearch
 
 ## Usage
 
-### 1. Client and Repository Configuration
+### 1. Entity Definition
 ```typescript
-import { EsRepository } from 'elastic-orm/dist/src/repository/EsRepository';
-import { Client } from '@elastic/elasticsearch';
+import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
+import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
+import { EsId } from 'elastic-orm/dist/decorators/EsId';
 
-const repository = new EsRepository(
-  TestingClass,
-  new Client(/* client configuration */),
-);
-```
-Client configuration is provided here [https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/client-connecting.html](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/client-connecting.html)
-
-### 2. Entity Definition
-```typescript
 @EsEntity('elastic_index') // specify your elastic index
 export class MyEntity {
   @EsId()
@@ -47,9 +39,23 @@ export class MyEntity {
 }
 ```
 
-### 3. Create Mapping
+### 2. Client and Repository Configuration
+```typescript
+import { EsRepository } from 'elastic-orm/dist/repository/EsRepository';
+import { Client } from '@elastic/elasticsearch';
+
+const repository = new EsRepository(
+  MyEntity,
+  new Client(/* client configuration */),
+);
+```
+Client configuration is provided here [https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/client-connecting.html](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/client-connecting.html)
+
+### 4. Create Mapping
 You can easily create index from you entity definition by running:
 ```typescript
+import { FactoryProvider } from 'elastic-orm/dist/factory/Factory.provider';
+
 const schema =
   FactoryProvider.makeSchemaManager().generateIndexSchema(MyEntity);
 await repository.createIndex(schema);
@@ -124,4 +130,27 @@ export class MyEntity {
   }
 }) // specify your elastic index
 export class MyEntity
+```
+
+### Global request manipulation
+Enhancing elastic search requests is sometimes useful in one place. 
+To do so you can register your function which will be executed before every request on elastic.
+
+For example:
+1. Enable explain for non production environments
+```typescript
+repository.on('beforeRequest', (action, esParams, args) => {
+  if (process.env.NODE_ENV !== 'production') {
+    esParams.explain = true;
+  }
+});
+```
+
+2. In case of find method replace index for alias
+```typescript
+repository.on('beforeRequest', (action, esParams, args) => {
+  if (action === 'find') {
+    esParams.index = 'elastic_index_alias_read';
+  }
+});
 ```

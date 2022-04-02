@@ -2,6 +2,7 @@ import { TestingClass } from '../../../fixtures/TestingClass';
 import { TestingClass as TestingClass2 } from '../../../fixtures/TestingClass2';
 import { EntityTransformer } from '../../../../src/utils/EntityTransformer';
 import { FactoryProvider } from '../../../../src/factory/Factory.provider';
+import { CustomIdGeneratorEntity } from '../../../fixtures/CustomIdGeneratorEntity';
 
 describe('entity transformer', () => {
   let entityTransformer: EntityTransformer;
@@ -59,5 +60,12 @@ describe('entity transformer', () => {
     const normalizedEntityRetried =
       entityTransformer.normalize(denormalizedEntity);
     expect(normalizedEntityRetried).toMatchObject(normalizedEntity);
+  });
+
+  it('should generate custom id', () => {
+    const entity = new CustomIdGeneratorEntity();
+    const normalizedEntity = entityTransformer.normalize(entity);
+
+    expect(normalizedEntity.id).toBe('myCustomId');
   });
 });

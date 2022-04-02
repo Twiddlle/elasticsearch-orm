@@ -10,7 +10,7 @@ import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFound
 
 config({ path: path.join(__dirname, '.env') });
 
-describe('RepositoryAliases', () => {
+describe.skip('RepositoryAliases', () => {
   let repository: EsRepository<TestingClassWithIndexFn>;
   let createdEntity: TestingClassWithIndexFn;
 

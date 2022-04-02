@@ -11,7 +11,7 @@ import {
 
 config({ path: path.join(__dirname, '.env') });
 
-describe('RepositoryNested', () => {
+describe.skip('RepositoryNested', () => {
   let repository: EsRepository<TestingNestedClass>;
   let createdEntity: TestingNestedClass;
 

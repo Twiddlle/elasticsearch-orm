@@ -10,7 +10,7 @@ import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFound
 
 config({ path: path.join(__dirname, '.env') });
 
-describe.skip('Repository', () => {
+describe('Repository', () => {
   let repository: EsRepository<TestingClass>;
   let createdEntity: TestingClass;
 
@@ -26,7 +26,7 @@ describe.skip('Repository', () => {
       }),
     );
 
-    repository.on('beforeRequest', (action, esParams, args) => {
+    repository.on('beforeRequest', (action, esParams) => {
       if (action === 'find') {
         esParams.explain = true;
       }

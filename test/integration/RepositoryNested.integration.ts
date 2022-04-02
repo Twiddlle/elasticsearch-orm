@@ -11,9 +11,8 @@ import {
 
 config({ path: path.join(__dirname, '.env') });
 
-describe.skip('RepositoryNested', () => {
+describe('RepositoryNested', () => {
   let repository: EsRepository<TestingNestedClass>;
-  let createdEntity: TestingNestedClass;
 
   beforeAll(async () => {
     repository = new EsRepository(

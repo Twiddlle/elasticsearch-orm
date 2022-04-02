@@ -1,12 +1,12 @@
 {
   "name": "elastic-orm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Elasticsearch object relational mapper.",
-  "main": "index.js",
   "scripts": {
     "build": "tsc --project ./tsconfig.json",
-    "test": "jest --forceExit --detectOpenHandles",
-    "test:cov": "jest --forceExit --detectOpenHandles --collectCoverage"
+    "test": "jest --forceExit --detectOpenHandles \"\\.spec\\.ts\"",
+    "test:full": "jest \"\\.(integration|spec)\\.ts\"",
+    "test:cov": "jest --collectCoverage \"\\.(integration|spec)\\.ts\""
   },
   "repository": {
     "type": "git",
@@ -50,12 +50,11 @@
   "jest": {
     "moduleFileExtensions": [
       "js",
-      "json",
       "ts"
     ],
     "rootDir": ".",
     "testEnvironment": "node",
-    "testRegex": "\\.spec\\.ts$",
+    "testRegex": "\\.(integration|spec)\\.ts$",
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },

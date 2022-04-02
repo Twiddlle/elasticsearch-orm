@@ -1,10 +1,14 @@
-//todo: add more version of elastic queries 7.x, 8.x
 import { EsFulltextQueries } from './fulltextQueries';
 import { EsSortTypes } from './sort';
 import { EsSourceTypes } from './source';
 import { EsQueryFieldsTypes } from './fields';
 import { EsTermLevelQueries } from './termQueries';
 import { EsGeoQueries } from './geoQueries';
+import { EsFilter } from './filter';
+import { EsSuggestion } from './suggestion';
+import { EsCollapseType } from './collapse';
+import { EsReScoreType } from './rescore';
+import { EsHighlightsType } from './highlights';
 
 export type EsQueryObject<T> =
   | EsFulltextQueries<T>
@@ -22,145 +26,49 @@ export interface EsQueryMatchAll {
   match_all: Record<string, unknown>;
 }
 
-export interface EsQuery<T = unknown> {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type EsQuery<T = unknown> = EsQueryInterface<T> | Function;
+
+export interface EsQueryInterface<T = unknown> {
   query: EsBoolQuery<T> | EsQueryObject<T> | EsQueryMatchAll;
   size?: number;
   from?: number;
-  sort?: EsSortTypes;
+  sort?: EsSortTypes<T>;
   _source?: EsSourceTypes<T>;
   fields?: EsQueryFieldsTypes<T>;
-  /*
-  profile?: boolean;
   aggs?: {
     [name: string]: {
       [type: string]: Record<string, any>;
     };
   };
-
-  post_filter: {
-    __scope_link: 'GLOBAL.filter';
-  };
-  size?: number;
-  from?: number;
-  sort?: Array<EsSortTypes<T>>;
+  profile?: boolean;
   track_scores?: boolean;
   pit?: {
     id: string;
     keep_alive: 'string';
   };
-  search_after?: [];
-  stored_fields?: EsFieldTypes<T>;
-  suggest: {
-    __template: {
-      YOUR_SUGGESTION: {
-        text: 'YOUR TEXT';
-        term: {
-          FIELD: 'MESSAGE';
-        };
-      };
-    };
-    '*': {
-      include: [];
-      exclude: [];
+  search_after?: string[];
+  post_filter?: EsFilter<T>;
+  suggest?: EsSuggestion<T>;
+  collapse?: EsCollapseType<T>;
+  indices_boost?: Array<Record<string, number>>;
+  rescore?: EsReScoreType | EsReScoreType[];
+  script_fields?: {
+    [field: string]: {
+      script: string;
     };
   };
-  docvalue_fields: ['{field}'];
-  fields: {
-    __one_of: [
-      [
-        {
-          __one_of: [
-            '{field}',
-            '*',
-            {
-              field: '{field}';
-              include_unmapped: {
-                __one_of: ['true', 'false'];
-              };
-              format: '';
-            },
-          ];
-        },
-      ],
-      '*',
-    ];
-  };
-  collapse: {
-    __template: {
-      field: 'FIELD';
+  runtime_mappings?: {
+    [key: string]: {
+      type: string;
     };
   };
-  indices_boost: {
-    __template: [{ INDEX: 1.0 }];
-  };
-  rescore: {
-    __template: {
-      query: Record<string, any>;
-      window_size: 50;
-    };
-  };
-  script_fields: {
-    __template: {
-      FIELD: {
-        script: {
-          // populated by a global rule
-        };
-      };
-    };
-    '*': {
-      __scope_link: 'GLOBAL.script';
-    };
-  };
-  runtime_mappings: {
-    __template: {
-      FIELD: {
-        type: '';
-        script: {
-          // populated by a global rule
-        };
-      };
-    };
-    '*': {
-      __scope_link: 'GLOBAL.script';
-    };
-  };
-  partial_fields: {
-    __template: {
-      NAME: {
-        include: [];
-      };
-    };
-    '*': {
-      include: [];
-      exclude: [];
-    };
-  };
-  highlight: {
-    // populated by a global rule
-  };
-  _source: {
-    __one_of: [
-      ['{field}'],
-      '*',
-      '{field}',
-      true,
-      false,
-      {
-        includes: {
-          __one_of: ['{field}', ['{field}']];
-        };
-        excludes: {
-          __one_of: ['{field}', ['{field}']];
-        };
-      },
-    ];
-  };
-  explain: {
-    __one_of: [true, false];
-  };
-  stats: [''];
-  timeout: '1s';
-  version: { __one_of: [true, false] };
-  track_total_hits: { __one_of: [true, false] };*/
+  highlight?: EsHighlightsType<T>;
+  explain?: boolean;
+  stats?: any;
+  timeout?: '10s' | '20s' | '30s' | string;
+  wait_for_completion?: boolean;
+  version?: boolean;
   track_total_hits?: boolean;
+  [key: string]: any;
 }

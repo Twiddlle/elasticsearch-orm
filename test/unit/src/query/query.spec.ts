@@ -42,4 +42,21 @@ describe('query', () => {
       },
     };
   });
+
+  it('bool', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const query: EsQuery<TestingNestedClass> = {
+      query: {
+        bool: {
+          must: [
+            {
+              term: {
+                foo: 123,
+              },
+            },
+          ],
+        },
+      },
+    };
+  });
 });

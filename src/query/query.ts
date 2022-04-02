@@ -16,9 +16,8 @@ export type EsQueryObject<T> =
   | EsGeoQueries<T>;
 
 export interface EsBoolQuery<T> {
-  bool: Record<
-    'must' | 'must_not' | 'should' | 'filter',
-    Array<EsQueryObject<T>>
+  bool: Partial<
+    Record<'must' | 'must_not' | 'should' | 'filter', Array<EsQueryObject<T>>>
   >;
 }
 

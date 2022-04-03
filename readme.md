@@ -237,7 +237,7 @@ export class MyEntity {
     dynamic: 'strict',
   },
 })
-export class MyEntity
+export class MyEntity{}
 ```
 
 ### Update Mapping

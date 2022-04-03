@@ -122,7 +122,7 @@ Repository requires specific elastic structure object by default.
 Thanks to typescript query can be written really easily with autosuggestion.
 It will hint also properties from defined entity.
 
-<img src="./docs/autosuggestion.png">
+![autosuggestion](docs/autosuggestion.png)
 
 #### Query Builder
 If you are more familiar with builders. Bodybuilder can be used easily.

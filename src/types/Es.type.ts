@@ -21,6 +21,29 @@ export const ElasticSearchTypes = {
   //text
   text: String,
   match_only_text: String,
+
+  // date
+  date: Date,
+  date_nanos: Date,
+
+  // range
+  integer_range: Number,
+  float_range: Number,
+  long_range: Number,
+  double_range: Number,
+  date_range: Date,
+  ip_range: Number,
+
+  // others
+  binary: Buffer,
+  flattened: Object,
+
+  geo_point: Object,
+  geo_shape: Object,
+  point: Object,
+  shape: Object,
+  percolator: Object,
+  ip: String,
 };
 
 export type EsType = keyof typeof ElasticSearchTypes | string;

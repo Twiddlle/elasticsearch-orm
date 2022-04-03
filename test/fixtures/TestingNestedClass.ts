@@ -3,7 +3,15 @@ import { EsProperty } from '../../src/decorators/EsProperty';
 import { EsId } from '../../src/decorators/EsId';
 
 export class TestingImageClass {
-  @EsProperty('keyword')
+  @EsProperty('text', {
+    additionalFieldOptions: {
+      fields: {
+        raw: {
+          type: 'keyword',
+        },
+      },
+    },
+  })
   public name: string;
 
   @EsProperty('integer')
@@ -18,7 +26,11 @@ export class TestingAuthorClass {
   public image: TestingImageClass;
 }
 
-@EsEntity('test_index_main_nested')
+@EsEntity('test_index_main_nested', {
+  mapping: {
+    dynamic: 'strict',
+  },
+})
 export class TestingNestedClass {
   @EsId()
   public id: string;

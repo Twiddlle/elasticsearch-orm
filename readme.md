@@ -4,11 +4,13 @@
 
 [//]: # (![Package types definitions]&#40;https://github.com/Twiddlle/elastic-orm//actions/workflows/main.yml/badge.svg&#41;)
 
+[//]: # ()
 [//]: # (![Package types definitions]&#40;https://img.shields.io/github/issues-raw/Twiddlle/elastic-orm&#41;)
 
+[//]: # ()
 [//]: # (![Top language]&#40;https://img.shields.io/github/languages/top/Twiddlle/elastic-orm&#41;)
 
-[//]: # (![Package downloads]&#40;https://img.shields.io/npm/dm/elastic-orm&#41;)
+![Package downloads](https://img.shields.io/npm/dm/elastic-orm)
 
 ElasticORM is an ORM tool that can run in javascript and helps developers
 to define a mapping of entities in one place by using decorators.
@@ -81,7 +83,7 @@ const createdEntity = await repository.create(myEntity)
 ```
 
 ```typescript
-const res = await repository.find({
+const {entities, raw} = await repository.find({
   query: {
     term: {
       foo: 99,
@@ -89,6 +91,8 @@ const res = await repository.find({
   },
 })
 ```
+- **entities** contain deserialized entities.
+- **raw** contains raw response from elastic.
 
 ### Repository methods
 #### Entity methods
@@ -115,13 +119,78 @@ const res = await repository.find({
 
 ## Advanced Usage
 
-### Generating entity identifier
+### Query
+#### Native query interface
+Repository requires specific elastic structure object by default.
+Thanks to typescript query can be written really easily with autosuggestion.
+It will hint also properties from defined entity.
+
+![](docs/autosuggestion.png)
+
+#### Query Builder
+If you are more familiar with builders. Bodybuilder can be used easily.
+1. Install [bodybuilder](https://www.npmjs.com/package/bodybuilder) package.
+```shell
+npm i bodybuilder
+```
+2. Builder usage
+```typescript
+import * as bodybuilder from 'bodybuilder';
+
+const body = bodybuilder().query('match', 'foo', 1).build();
+const res = await repository.findOne(body);
+```
+
+
+### Nested Entities
+```typescript
+import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
+import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
+import { EsId } from 'elastic-orm/dist/decorators/EsId';
+
+@EsEntity('elastic_index')
+export class MyEntity {
+  @EsId()
+  public id: string;
+
+  @EsProperty('integer')
+  public foo: number;
+
+  @EsProperty({ type: 'nested', entity: MyNestedEntity })
+  public nestedItem: MyNestedEntity;
+
+  @EsProperty({ type: 'nested', entity: MyNestedEntity })
+  public nestedItems: MyNestedEntity[];
+}
+
+export class MyNestedEntity {
+  @EsProperty('keyword')
+  public name: string;
+}
+
+// query for nested entities
+const res = await repository.findOne({
+  query: {
+    nested: {
+      path: 'nestedItem',
+      query: {
+        bool: {
+          must: [{ match: { 'nestedItem.name': 'find this string' } }],
+        },
+      },
+    },
+  },
+});
+```
+
+### Generating Entity Identifier
 Identifier is automatically generated. But if you want to control generation of ids, you can use this approach:
 ```typescript
 @EsEntity('elastic_index')
 export class MyEntity {
   @EsId({
     generator: () => {
+      // apply custom logic here
       return 'customGeneratedId';
     },
   })
@@ -129,7 +198,33 @@ export class MyEntity {
 }
 ```
 
-### Aliases and settings
+### Additional Field Options
+For additional property options use parameter `additionalFieldOptions`. 
+```typescript
+import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
+import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
+import { EsId } from 'elastic-orm/dist/decorators/EsId';
+
+@EsEntity('elastic_index')
+export class MyEntity {
+  @EsId()
+  public id: string;
+
+  @EsProperty('text', {
+    additionalFieldOptions: {
+      boost: 10,
+      fields: {
+        raw: {
+          type: 'keyword',
+        },
+      },
+    },
+  })
+  public foo: string;
+}
+```
+
+### Aliases and Settings
 ```typescript
 @EsEntity('elastic_index', {
   aliases: ['elastic_index_alias_read', 'elastic_index_alias_write'],
@@ -137,12 +232,30 @@ export class MyEntity {
     number_of_replicas: 1,
     number_of_shards: 5,
     // and other settings definitions
-  }
+  },
+  mapping: {
+    dynamic: 'strict',
+  },
 })
 export class MyEntity
 ```
 
-### Global request manipulation
+### Update Mapping
+```typescript
+import { FactoryProvider } from 'elastic-orm/dist/factory/Factory.provider';
+
+const mapping = FactoryProvider.makeSchemaManager().buildMapping(
+  FactoryProvider.makeMetaLoader().getReflectMetaData(TestingNestedClass),
+);
+await repository.updateMapping(mapping);
+```
+
+### Delete Index
+```typescript
+await repository.deleteIndex();
+```
+
+### Global Request Manipulation
 Enhancing elastic search requests is sometimes useful in one place. 
 To do so you can register custom function which will be executed before every request on elastic.
 

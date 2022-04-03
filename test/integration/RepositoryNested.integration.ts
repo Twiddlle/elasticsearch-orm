@@ -32,6 +32,10 @@ describe('RepositoryNested', () => {
           TestingNestedClass,
         );
       await repository.createIndex(schema);
+      const mapping = FactoryProvider.makeSchemaManager().buildMapping(
+        FactoryProvider.makeMetaLoader().getReflectMetaData(TestingNestedClass),
+      );
+      await repository.updateMapping(mapping);
     } catch (e) {
       console.warn(e.message);
     }
@@ -47,7 +51,7 @@ describe('RepositoryNested', () => {
 
     entity.image = new TestingImageClass();
     entity.image.size = 1024;
-    entity.image.name = 'x';
+    entity.image.name = 'entity img';
 
     entity.author = new TestingAuthorClass();
     entity.author.image = new TestingImageClass();
@@ -58,7 +62,7 @@ describe('RepositoryNested', () => {
     expect(createdNestedEntity.entity.id).toHaveLength(21);
     expect(createdNestedEntity.entity.foo).toBe(1);
     expect(createdNestedEntity.entity.image).toBeInstanceOf(TestingImageClass);
-    expect(createdNestedEntity.entity.image.name).toBe('x');
+    expect(createdNestedEntity.entity.image.name).toBe('entity img');
     expect(createdNestedEntity.entity.image.size).toBe(1024);
     expect(createdNestedEntity.entity.author).toBeInstanceOf(
       TestingAuthorClass,
@@ -66,5 +70,22 @@ describe('RepositoryNested', () => {
     expect(createdNestedEntity.entity.author.name).toBe('Jason');
     expect(createdNestedEntity.entity.author.image.name).toBe('profile pic');
     expect(createdNestedEntity.entity.author.image.size).toBe(2895);
+  });
+
+  it('should find nested entity with nested query', async () => {
+    const res = await repository.findOne({
+      query: {
+        nested: {
+          path: 'image',
+          query: {
+            bool: {
+              must: [{ match: { 'image.name.raw': 'entity img' } }],
+            },
+          },
+        },
+      },
+    });
+    expect(res.entity.id).toHaveLength(21);
+    expect(res.entity.image.name).toBe('entity img');
   });
 });

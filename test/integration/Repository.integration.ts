@@ -7,6 +7,7 @@ import { TestingClass } from '../fixtures/TestingClass';
 import { ResponseError } from '@elastic/elasticsearch/lib/errors';
 import { EsException } from '../../src/exceptions/EsException';
 import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFoundException';
+import * as bodybuilder from 'bodybuilder';
 
 config({ path: path.join(__dirname, '.env') });
 
@@ -298,5 +299,12 @@ describe('Repository', () => {
     });
 
     expect(verifyDeletion.entities).toHaveLength(0);
+  });
+
+  it('should find entities with bodybuilder', async () => {
+    const body = bodybuilder().query('match', 'foo', 111).build();
+    const res = await repository.findOne(body);
+
+    expect(res.entity.foo).toBe(111);
   });
 });

@@ -9,10 +9,12 @@ import { EsSuggestion } from './suggestion';
 import { EsCollapseType } from './collapse';
 import { EsReScoreType } from './rescore';
 import { EsHighlightsType } from './highlights';
+import { EsFieldType } from './common';
 
 export type EsQueryObject<T> =
   | EsFulltextQueries<T>
   | EsTermLevelQueries<T>
+  | EsNestedQuery<T>
   | EsGeoQueries<T>;
 
 export interface EsBoolQuery<T> {
@@ -25,11 +27,23 @@ export interface EsQueryMatchAll {
   match_all: Record<string, unknown>;
 }
 
+export interface EsNestedQuery<T> {
+  nested: {
+    path: EsFieldType<T>;
+    query: EsQueryComposed<T>;
+  };
+}
+
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type EsQuery<T = unknown> = EsQueryInterface<T> | Function;
+export type EsQuery<T = unknown> = EsQueryInterface<T> | Record<string, any>;
+
+export type EsQueryComposed<T> =
+  | EsBoolQuery<T>
+  | EsQueryObject<T>
+  | EsQueryMatchAll;
 
 export interface EsQueryInterface<T = unknown> {
-  query: EsBoolQuery<T> | EsQueryObject<T> | EsQueryMatchAll;
+  query: EsQueryComposed<T>;
   size?: number;
   from?: number;
   sort?: EsSortTypes<T>;

@@ -33,7 +33,7 @@ import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
 import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
 import { EsId } from 'elastic-orm/dist/decorators/EsId';
 
-@EsEntity('elastic_index') // specify your elastic index
+@EsEntity('elastic_index') // specify elastic index
 export class MyEntity {
   @EsId()
   public id: string;
@@ -138,13 +138,13 @@ export class MyEntity {
     number_of_shards: 5,
     // and other settings definitions
   }
-}) // specify your elastic index
+})
 export class MyEntity
 ```
 
 ### Global request manipulation
 Enhancing elastic search requests is sometimes useful in one place. 
-To do so you can register your function which will be executed before every request on elastic.
+To do so you can register custom function which will be executed before every request on elastic.
 
 For example:
 1. Enable explain for non production environments

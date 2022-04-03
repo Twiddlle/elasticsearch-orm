@@ -2,12 +2,9 @@
 
 ![Package version](https://img.shields.io/npm/v/elastic-orm?label=version)
 ![Package downloads](https://img.shields.io/npm/dm/elastic-orm)
-
-[//]: # (![Package types definitions]&#40;https://github.com/Twiddlle/elasticsearch-orm//actions/workflows/main.yml/badge.svg&#41;)
-
-[//]: # (![Package types definitions]&#40;https://img.shields.io/github/issues-raw/Twiddlle/elasticsearch-orm&#41;)
-
-[//]: # (![Top language]&#40;https://img.shields.io/github/languages/top/Twiddlle/elasticsearch-orm&#41;)
+![Package types definitions](https://github.com/Twiddlle/elasticsearch-orm//actions/workflows/main.yml/badge.svg)
+![Package types definitions](https://img.shields.io/github/issues-raw/Twiddlle/elasticsearch-orm)
+![Top language](https://img.shields.io/github/languages/top/Twiddlle/elasticsearch-orm)
 
 ElasticORM is an ORM tool that can run in javascript and helps developers
 to define a mapping of entities in one place by using decorators.

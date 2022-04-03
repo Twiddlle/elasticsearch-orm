@@ -1,6 +1,6 @@
 {
   "name": "elastic-orm",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Elasticsearch object relational mapper.",
   "scripts": {
     "build": "tsc --project ./tsconfig.json",

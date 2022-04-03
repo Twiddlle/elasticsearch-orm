@@ -61,7 +61,7 @@ const repository = new EsRepository(
 ```
 Client configuration is provided here [https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/client-connecting.html](https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/7.17/client-connecting.html)
 
-### 4. Create Mapping
+### 3. Create Mapping
 You can easily create index from you entity definition by running:
 ```typescript
 import { FactoryProvider } from 'elastic-orm/dist/factory/Factory.provider';

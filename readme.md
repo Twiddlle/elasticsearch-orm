@@ -1,8 +1,9 @@
 # ElasticORM
 
 ![Package version](https://img.shields.io/npm/v/elastic-orm?label=version)
-![Package types definitions](https://github.com/Twiddlle/elasticsearch-orm//actions/workflows/main.yml/badge.svg)
 ![Package downloads](https://img.shields.io/npm/dm/elastic-orm)
+
+[//]: # (![Package types definitions]&#40;https://github.com/Twiddlle/elasticsearch-orm//actions/workflows/main.yml/badge.svg&#41;)
 
 [//]: # (![Package types definitions]&#40;https://img.shields.io/github/issues-raw/Twiddlle/elasticsearch-orm&#41;)
 

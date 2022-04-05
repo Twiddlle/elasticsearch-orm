@@ -42,6 +42,9 @@ export class MyEntity {
 
   @EsProperty('boolean')
   public isTutorial: boolean;
+
+  @EsProperty('date')
+  public createdAt: Date;
 }
 ```
 
@@ -73,6 +76,7 @@ const myEntity = new MyEntity()
 myEntity.foo = 99
 myEntity.bar = 'hello elastic search'
 myEntity.isTutorial = true
+myEntity.createdAt = new Date()
 const createdEntity = await repository.create(myEntity)
 ```
 

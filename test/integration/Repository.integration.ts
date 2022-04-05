@@ -51,12 +51,33 @@ describe('Repository', () => {
     entity.foo = 1;
     entity.bar = true;
     entity.geoPoint = [14, 15];
+    entity.createdAt = new Date('2022-04-01T00:00:00.000Z');
+    entity.updatedAt = [
+      new Date('2022-04-01T00:00:00.000Z'),
+      new Date('2022-04-02T00:00:00.000Z'),
+    ];
     const createdRes = await repository.create(entity);
     createdEntity = createdRes.entity;
     expect(createdEntity.id).toHaveLength(21);
     expect(createdEntity.foo).toBe(1);
     expect(createdEntity.bar).toBe(true);
     expect(createdEntity.geoPoint).toMatchObject([14, 15]);
+    expect(createdEntity.createdAt).toBeInstanceOf(Date);
+    expect(createdEntity.createdAt.toISOString()).toBe(
+      '2022-04-01T00:00:00.000Z',
+    );
+    expect(createdEntity.updatedAt).toHaveLength(2);
+    expect(JSON.stringify(createdEntity.updatedAt)).toBe(
+      '["2022-04-01T00:00:00.000Z","2022-04-02T00:00:00.000Z"]',
+    );
+    expect(createdEntity.updatedAt[0]).toBeInstanceOf(Date);
+    expect(createdEntity.updatedAt[1]).toBeInstanceOf(Date);
+    expect(createdEntity.updatedAt[0].toISOString()).toBe(
+      '2022-04-01T00:00:00.000Z',
+    );
+    expect(createdEntity.updatedAt[1].toISOString()).toBe(
+      '2022-04-02T00:00:00.000Z',
+    );
   });
 
   it('should get entity', async () => {

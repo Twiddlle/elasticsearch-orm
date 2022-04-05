@@ -21,4 +21,10 @@ export class TestingClass {
 
   @EsProperty('geo_point')
   public geoPoint: number[];
+
+  @EsProperty('date')
+  public createdAt: Date;
+
+  @EsProperty('date')
+  public updatedAt: Date[];
 }

@@ -5,7 +5,8 @@ import {
   EsMetaDataInterface,
   EsPropsMetaDataInterface,
 } from '../types/EsMetaData.interface';
-import {EsValidationException} from "../exceptions/EsValidationException";
+import { EsValidationException } from '../exceptions/EsValidationException';
+import { EsPropertyTypedOptions } from '../types/EsPropertyOptions.intarface';
 
 export class EntityTransformer {
   constructor(private readonly metaLoader: MetaLoader) {}
@@ -101,17 +102,35 @@ export class EntityTransformer {
             );
         } else {
           denormalizedEntity[prop.options.entityPropName] =
-            dbEntityData[strategyPropName];
+            this.denormalizeProp(prop, dbEntityData[strategyPropName]);
         }
       }
     }
     return denormalizedEntity;
   }
 
+  private denormalizeProp(propMeta: EsPropsMetaDataInterface, propValue) {
+    if (propValue instanceof Array) {
+      return propValue.map((propValueItem) => {
+        return this.denormalizeProp(propMeta, propValueItem);
+      });
+    }
+    if (
+      (propMeta.options as EsPropertyTypedOptions).type === 'date' &&
+      !!propValue
+    ) {
+      return new Date(propValue);
+    }
+
+    return propValue;
+  }
+
   private getMeta(entity) {
     const metaData = this.metaLoader.getReflectMetaData(entity.constructor);
     if (!metaData || !metaData.entity || !metaData.props) {
-      throw new EsValidationException(`${entity.constructor.name} is not valid elastic entity`);
+      throw new EsValidationException(
+        `${entity.constructor.name} is not valid elastic entity`,
+      );
     }
     return metaData;
   }

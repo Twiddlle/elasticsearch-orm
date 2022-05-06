@@ -3,4 +3,4 @@ node_modules
 package-lock.json
 coverage
 dist
-test/integration/.env
+test/.env

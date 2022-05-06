@@ -9,9 +9,9 @@ import { EsException } from '../../src/exceptions/EsException';
 import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFoundException';
 import * as bodybuilder from 'bodybuilder';
 
-config({ path: path.join(__dirname, '.env') });
+config({ path: path.join(__dirname, '..', '.env') });
 
-describe('Repository', () => {
+describe('Repository.integration', () => {
   let repository: EsRepository<TestingClass>;
   let createdEntity: TestingClass;
 

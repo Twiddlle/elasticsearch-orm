@@ -355,11 +355,11 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     }
   }
 
-  private getIndex<Entity>(entity: Entity, query?: EsQuery) {
+  private getIndex(entity: Entity, query?: EsQuery) {
     return this.metaLoader.getIndex(entity, query);
   }
 
-  private getRefreshOption<Entity>(entity: Entity) {
+  private getRefreshOption(entity: Entity) {
     return this.metaLoader.getReflectMetaData(
       entity.constructor as ClassType<Entity>,
     ).entity.options.refresh;

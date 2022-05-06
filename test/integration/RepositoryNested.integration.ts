@@ -9,7 +9,7 @@ import {
   TestingNestedClass,
 } from '../fixtures/TestingNestedClass';
 
-config({ path: path.join(__dirname, '.env') });
+config({ path: path.join(__dirname, '..', '.env') });
 
 describe('RepositoryNested', () => {
   let repository: EsRepository<TestingNestedClass>;

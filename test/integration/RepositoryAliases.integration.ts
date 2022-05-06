@@ -8,7 +8,7 @@ import { ResponseError } from '@elastic/elasticsearch/lib/errors';
 import { EsException } from '../../src/exceptions/EsException';
 import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFoundException';
 
-config({ path: path.join(__dirname, '.env') });
+config({ path: path.join(__dirname, '..', '.env') });
 
 describe('RepositoryAliases', () => {
   let repository: EsRepository<TestingClassWithIndexFn>;

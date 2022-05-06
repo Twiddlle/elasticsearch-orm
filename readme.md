@@ -41,7 +41,7 @@ export class MyEntity {
   public bar: string;
 
   @EsProperty('boolean')
-  public isTutorial: boolean;
+  public fingersCrossedForUkraine: boolean = true;
 
   @EsProperty('date')
   public createdAt: Date;

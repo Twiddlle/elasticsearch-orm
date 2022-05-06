@@ -11,7 +11,19 @@ import { EsPropertyTypedOptions } from '../types/EsPropertyOptions.intarface';
 export class EntityTransformer {
   constructor(private readonly metaLoader: MetaLoader) {}
 
-  normalize(entity: unknown): NormalizedEntity {
+  normalize(entities: unknown[]): NormalizedEntity[];
+  normalize(entity: unknown): NormalizedEntity;
+
+  normalize(
+    entity: unknown[] | unknown,
+  ): NormalizedEntity | NormalizedEntity[] {
+    if (entity instanceof Array) {
+      return entity.map((e) => this.normalizeEntity(e));
+    }
+    return this.normalizeEntity(entity);
+  }
+
+  private normalizeEntity(entity: unknown): NormalizedEntity {
     if (!(entity instanceof Object)) {
       throw new EsValidationException('Not valid entity to normalize');
     }
@@ -56,7 +68,23 @@ export class EntityTransformer {
     return dbEntityData;
   }
 
-  denormalize<T>(type: ClassType<T>, dbEntity: NormalizedEntity): T {
+  denormalize<T>(type: ClassType<T>, dbEntity: NormalizedEntity): T;
+  denormalize<T>(type: ClassType<T>, dbEntity: NormalizedEntity[]): T[];
+
+  denormalize<T>(
+    type: ClassType<T>,
+    dbEntity: NormalizedEntity | NormalizedEntity[],
+  ): T | T[] {
+    if (dbEntity instanceof Array) {
+      return dbEntity.map((e) => this.denormalizeEntity(type, e));
+    }
+    return this.denormalizeEntity(type, dbEntity);
+  }
+
+  private denormalizeEntity<T>(
+    type: ClassType<T>,
+    dbEntity: NormalizedEntity,
+  ): T {
     const entity = new type();
     const metaData = this.getMeta(entity);
     entity[metaData.idPropName] = dbEntity.id;

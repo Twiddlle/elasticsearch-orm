@@ -1,12 +1,12 @@
 {
   "name": "elastic-orm",
-  "version": "0.1.15",
+  "version": "0.1.16",
   "description": "Elasticsearch object relational mapper.",
   "scripts": {
     "build": "tsc --project ./tsconfig.json",
     "test": "jest --forceExit --detectOpenHandles \"\\.spec\\.ts\"",
-    "test:full": "jest \"\\.(integration|spec)\\.ts\"",
-    "test:cov": "jest --collectCoverage \"\\.(integration|spec)\\.ts\""
+    "test:full": "jest \"\\.(integration|spec|performance)\\.ts\"",
+    "test:cov": "jest --collectCoverage \"\\.(integration|spec|performance)\\.ts\""
   },
   "repository": {
     "type": "git",
@@ -31,13 +31,17 @@
     "@elastic/elasticsearch": "^7.17.0",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^27.4.1",
+    "@types/lorem-ipsum": "^2.0.0",
+    "@types/random": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
     "bodybuilder": "^2.4.0",
     "dotenv": "^16.0.0",
     "eslint": "^8.12.0",
     "jest": "^27.5.1",
+    "lorem-ipsum": "^2.0.4",
     "prettier": "^2.6.1",
+    "random": "^3.0.6",
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3"
   },
@@ -55,7 +59,7 @@
     ],
     "rootDir": ".",
     "testEnvironment": "node",
-    "testRegex": "\\.(integration|spec)\\.ts$",
+    "testRegex": "\\.(integration|spec|performance)\\.ts$",
     "transform": {
       "^.+\\.ts$": "ts-jest"
     },

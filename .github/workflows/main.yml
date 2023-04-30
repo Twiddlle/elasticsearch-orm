@@ -59,16 +59,16 @@ jobs:
       - name: Get tag
         id: tag
         run: echo "tag=$(cat tag.txt)" >> $GITHUB_OUTPUT
-      - run: sed -i "s/0.0.0/${{ steps.tag.outputs.tag }}/" package.json
-      - run: cat package.json
-      - run: rm tag.txt
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 15.x
-          registry-url: 'https://registry.npmjs.org'
-      - run: npm i
-      - run: npm run build
-      - run: cp ./.github/.npmrc .npmrc
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+#      - run: sed -i "s/0.0.0/${{ steps.tag.outputs.tag }}/" package.json
+#      - run: cat package.json
+#      - run: rm tag.txt
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: 15.x
+#          registry-url: 'https://registry.npmjs.org'
+#      - run: npm i
+#      - run: npm run build
+#      - run: cp ./.github/.npmrc .npmrc
+#      - run: npm publish
+#        env:
+#          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -37,7 +37,7 @@ export class TestingNestedClass {
 
   @EsProperty('integer', {
     additionalFieldOptions: {
-      boost: 10,
+      coerce: true,
     },
   })
   public foo: number;
@@ -59,7 +59,7 @@ export class TestingNestedArrayClass {
 
   @EsProperty('integer', {
     additionalFieldOptions: {
-      boost: 10,
+      coerce: true,
     },
   })
   public foo: number[];

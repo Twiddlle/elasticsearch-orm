@@ -210,7 +210,7 @@ export class MyEntity {
 
   @EsProperty('text', {
     additionalFieldOptions: {
-      boost: 10,
+      enabled: false,
       fields: {
         raw: {
           type: 'keyword',

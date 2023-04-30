@@ -11,7 +11,7 @@ export class TestingClassWithIndexFn {
 
   @EsProperty('integer', {
     additionalFieldOptions: {
-      boost: 10,
+      coerce: true,
     },
   })
   public foo: number;

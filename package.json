@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/Twiddlle/elasticsearch-orm#readme",
   "devDependencies": {
-    "@elastic/elasticsearch": "^7.17.0",
+    "@elastic/elasticsearch": "^8.7.0",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^27.4.1",
     "@types/lorem-ipsum": "^2.0.0",

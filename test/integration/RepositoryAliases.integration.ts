@@ -4,9 +4,9 @@ import { EsRepository } from '../../src/repository/EsRepository';
 import { Client } from '@elastic/elasticsearch';
 import { FactoryProvider } from '../../src/factory/Factory.provider';
 import { TestingClassWithIndexFn } from '../fixtures/TestingClassWithIndexFn';
-import { ResponseError } from '@elastic/elasticsearch/lib/errors';
 import { EsException } from '../../src/exceptions/EsException';
 import { EsEntityNotFoundException } from '../../src/exceptions/EsEntityNotFoundException';
+import { ResponseError } from '@elastic/transport/lib/errors';
 
 config({ path: path.join(__dirname, '..', '.env') });
 
@@ -185,7 +185,7 @@ describe('RepositoryAliases', () => {
     const createdEntities = await repository.createMultiple(entities);
     expect(createdEntities.entities).toHaveLength(3);
     expect(createdEntities.hasErrors).toBeFalsy();
-    expect(createdEntities.raw.body.items).toHaveLength(3);
+    expect(createdEntities.raw.items).toHaveLength(3);
     expect(createdEntities.entities[0].id).toHaveLength(21);
     expect(createdEntities.entities[0].foo).toBe(555);
     expect(createdEntities.entities[1].id).toHaveLength(21);
@@ -203,7 +203,9 @@ describe('RepositoryAliases', () => {
     }
     expect(error).toBeInstanceOf(EsException);
     expect((error.originalError as ResponseError).message).toBe(
-      'parse_exception: [parse_exception] Reason: request body is required',
+      'parse_exception\n' +
+        '\tRoot causes:\n' +
+        '\t\tparse_exception: request body is required',
     );
   });
 
@@ -229,7 +231,7 @@ describe('RepositoryAliases', () => {
     ]);
     expect(updatedEntities.entities).toHaveLength(2);
     expect(updatedEntities.hasErrors).toBeFalsy();
-    expect(updatedEntities.raw.body.items).toHaveLength(2);
+    expect(updatedEntities.raw.items).toHaveLength(2);
     expect(updatedEntities.entities[0].id).toHaveLength(21);
     expect(updatedEntities.entities[0].foo).toBe(111);
     expect(updatedEntities.entities[1].id).toHaveLength(21);
@@ -253,7 +255,7 @@ describe('RepositoryAliases', () => {
     ]);
     expect(savedEntities.entities).toHaveLength(2);
     expect(savedEntities.hasErrors).toBeFalsy();
-    expect(savedEntities.raw.body.items).toHaveLength(2);
+    expect(savedEntities.raw.items).toHaveLength(2);
     expect(savedEntities.entities[0].id).toHaveLength(21);
     expect(savedEntities.entities[0].foo).toBeUndefined();
     expect(savedEntities.entities[1].id).toHaveLength(21);
@@ -268,7 +270,7 @@ describe('RepositoryAliases', () => {
     const createdEntities = await repository.createMultiple(entities);
     const ids = createdEntities.entities.map((entity) => entity.id);
     const deletedRes = await repository.deleteMultiple(ids);
-    expect(deletedRes.raw.body.items).toHaveLength(2);
+    expect(deletedRes.raw.items).toHaveLength(2);
     expect(deletedRes.hasErrors).toBeFalsy();
 
     const verifyDeletion = await repository.find({

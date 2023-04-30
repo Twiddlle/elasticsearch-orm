@@ -14,23 +14,21 @@ describe('Es Repository', () => {
   });
 
   it('create valid entity', async () => {
-    jest.spyOn(client, 'create').mockImplementationOnce(() => {
+    jest.spyOn(client, 'create').mockImplementationOnce((): any => {
       return {
         abort: () => undefined,
         result: 'created',
       };
     });
 
-    jest.spyOn(client, 'get').mockImplementationOnce(() => {
+    jest.spyOn(client, 'get').mockImplementationOnce((): any => {
       return {
         abort: () => undefined,
-        body: {
-          _id: '0eL8kTNJNs35P09tBGB3X',
-          _source: {
-            foo: 123,
-            bar: true,
-            geoPoint: [17, 18],
-          },
+        _id: '0eL8kTNJNs35P09tBGB3X',
+        _source: {
+          foo: 123,
+          bar: true,
+          geoPoint: [17, 18],
         },
       };
     });

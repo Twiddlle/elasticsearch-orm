@@ -16,7 +16,7 @@ describe('schema manager spec', () => {
     expect(schema.settings.number_of_shards).toBe(1);
     expect(schema.mappings.dynamic).toBe('strict');
     expect(schema.mappings.properties.foo.type).toBe('integer');
-    expect(schema.mappings.properties.foo.boost).toBe(10);
+    expect(schema.mappings.properties.foo.coerce).toBe(true);
     expect(schema.mappings.properties.bar.type).toBe('boolean');
     expect(schema.mappings.properties.geoPoint.type).toBe('geo_point');
   });

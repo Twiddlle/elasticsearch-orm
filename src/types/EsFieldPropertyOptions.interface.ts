@@ -3,6 +3,7 @@ export interface EsFieldPropertyOptions {
 
   boost?: number;
   analyzer?: unknown;
+  enabled?: unknown;
   eager_global_ordinals?: unknown;
   fielddata?: unknown;
   fielddata_frequency_filter?: unknown;
@@ -18,5 +19,6 @@ export interface EsFieldPropertyOptions {
   search_quote_analyzer?: unknown;
   similarity?: unknown;
   term_vector?: unknown;
+  null_value?: unknown;
   meta?: unknown;
 }

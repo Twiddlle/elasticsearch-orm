@@ -20,7 +20,8 @@ import {
   EsDeleteBulkResponseInterface,
   EsResponseInterface,
 } from './EsBulkResponseInterface';
-import * as RequestParams from '@elastic/elasticsearch/api/requestParams';
+import {TransportRequestOptions} from "@elastic/transport";
+import {SearchRequest} from "@elastic/elasticsearch/lib/api/types";
 
 export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
@@ -54,7 +55,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async create(
     entity: Entity,
-    params: Partial<RequestParams.Create> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsResponseInterface<Entity>> {
     const dbEntity = this.entityTransformer.normalize(entity);
 
@@ -80,14 +81,14 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async createMultiple(
     entities: Entity[],
-    params: Partial<RequestParams.Bulk> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsBulkResponseInterface<Entity>> {
     return this.makeBulkRequest(entities, 'create', params);
   }
 
   async delete(
     entity: Entity,
-    params: Partial<RequestParams.Delete> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<true> {
     try {
       const dbEntity = this.entityTransformer.normalize(entity);
@@ -110,7 +111,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async deleteMultiple(
     ids: string[],
-    params: Partial<RequestParams.Bulk> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsDeleteBulkResponseInterface<Entity>> {
     const bulkRequestBody = [];
     const index = this.metaLoader.getIndex(this.Entity);
@@ -139,7 +140,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
       return {
         raw: bulkRes,
-        hasErrors: !!bulkRes.body.errors,
+        hasErrors: !!bulkRes.errors,
       };
     } catch (e) {
       handleEsException(e);
@@ -148,10 +149,10 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async find(
     query: EsQuery<Entity>,
-    params: Partial<RequestParams.Search> = {},
+    params: Partial<SearchRequest> = {},
   ): Promise<EsCollectionResponseInterface<Entity>> {
     try {
-      const esParams: RequestParams.Search = Object.assign(
+      const esParams: SearchRequest = Object.assign(
         {
           index: this.metaLoader.getIndex(this.Entity, query as any),
           body: query,
@@ -160,9 +161,9 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       );
 
       this.triggerBeforeRequest('find', esParams, [query]);
-      const res = await this.client.search(esParams);
+      const res = await this.client.search<any>(esParams);
 
-      const hits = res.body?.hits?.hits || [];
+      const hits = res?.hits?.hits || [];
 
       return {
         raw: res,
@@ -180,7 +181,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async findById(
     id: string,
-    params: Partial<RequestParams.Get> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsResponseInterface<Entity>> {
     try {
       const esParams = Object.assign(
@@ -192,13 +193,13 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       );
 
       this.triggerBeforeRequest('findById', esParams, [id]);
-      const esRes = await this.client.get(esParams);
+      const esRes = await this.client.get<any>(esParams);
 
       return {
         raw: esRes,
         entity: this.entityTransformer.denormalize(this.Entity, {
-          id: esRes.body._id,
-          data: esRes.body._source,
+          id: esRes._id,
+          data: esRes._source,
         }),
       };
     } catch (e) {
@@ -226,7 +227,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async update(
     entity: Entity,
-    params: Partial<RequestParams.Update> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsResponseInterface<Entity>> {
     try {
       const dbEntity = this.entityTransformer.normalize(entity);
@@ -253,14 +254,14 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   updateMultiple(
     entities: Entity[],
-    params: Partial<RequestParams.Bulk> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsBulkResponseInterface<Entity>> {
     return this.makeBulkRequest(entities, 'update', params);
   }
 
   async index(
     entity: Entity,
-    params: Partial<RequestParams.Index> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsResponseInterface<Entity>> {
     try {
       const dbEntity = this.entityTransformer.normalize(entity);
@@ -291,14 +292,14 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   indexMultiple(
     entities: Entity[],
-    params: Partial<RequestParams.Bulk> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<EsBulkResponseInterface<Entity>> {
     return this.makeBulkRequest(entities, 'index', params);
   }
 
   async createIndex(
     indexInterface: EsIndexInterface,
-    params: Partial<RequestParams.IndicesCreate> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<void> {
     try {
       const esParams = Object.assign(
@@ -318,7 +319,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   }
 
   async deleteIndex(
-    params: Partial<RequestParams.IndicesDelete> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<void> {
     try {
       const esParams = Object.assign(
@@ -337,7 +338,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
 
   async updateMapping(
     mapping: EsMappingInterface,
-    params: Partial<RequestParams.IndicesPutMapping> = {},
+    params: Partial<TransportRequestOptions> = {},
   ): Promise<void> {
     try {
       const esParams = Object.assign(
@@ -368,7 +369,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private async makeBulkRequest(
     entities: Entity[],
     type: 'create' | 'index' | 'update',
-    params: Partial<RequestParams.Bulk>,
+    params: Partial<TransportRequestOptions>,
   ): Promise<EsBulkResponseInterface<Entity>> {
     const bulkRequestBody = [];
     const indices = new Set();
@@ -424,7 +425,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       return {
         entities: (await this.find(query)).entities,
         raw: bulkRes,
-        hasErrors: !!bulkRes.body.errors,
+        hasErrors: !!bulkRes.errors,
       };
     } catch (e) {
       handleEsException(e);

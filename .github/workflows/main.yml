@@ -16,7 +16,7 @@ jobs:
         uses: ietf-tools/semver-action@v1
         with:
           token: ${{ github.token }}
-          branch: master
+          branch: main
 
       - name: Create Tag
         uses: negz/create-tag@v1

@@ -2,7 +2,7 @@ name: Make version
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   tag:

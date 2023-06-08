@@ -8,6 +8,8 @@
     "test:full": "jest \"\\.(integration|spec|performance)\\.ts\"",
     "test:cov": "jest --collectCoverage \"\\.(integration|spec|performance)\\.ts\""
   },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Twiddlle/elasticsearch-orm.git"

@@ -21,7 +21,8 @@
     "decorators",
     "entity",
     "validation",
-    "mapping"
+    "mapping",
+    "typescript"
   ],
   "author": "Twiddle",
   "license": "MIT",

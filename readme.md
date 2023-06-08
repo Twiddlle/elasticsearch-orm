@@ -25,9 +25,7 @@ npm i elastic-orm @elastic/elasticsearch
 
 ### 1. Entity Definition
 ```typescript
-import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
-import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
-import { EsId } from 'elastic-orm/dist/decorators/EsId';
+import { EsEntity, EsProperty, EsId } from 'elastic-orm';
 
 @EsEntity('elastic_index') // specify elastic index
 export class MyEntity {
@@ -50,7 +48,7 @@ export class MyEntity {
 
 ### 2. Client and Repository Configuration
 ```typescript
-import { EsRepository } from 'elastic-orm/dist/repository/EsRepository';
+import { EsRepository } from 'elastic-orm';
 import { Client } from '@elastic/elasticsearch';
 
 const repository = new EsRepository(
@@ -63,7 +61,7 @@ Client configuration is provided here [https://www.elastic.co/guide/en/elasticse
 ### 3. Create Mapping
 You can easily create index from you entity definition by running:
 ```typescript
-import { FactoryProvider } from 'elastic-orm/dist/factory/Factory.provider';
+import { FactoryProvider } from 'elastic-orm';
 
 const schema =
   FactoryProvider.makeSchemaManager().generateIndexSchema(MyEntity);
@@ -142,9 +140,7 @@ const res = await repository.findOne(body);
 
 ### Nested Entities
 ```typescript
-import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
-import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
-import { EsId } from 'elastic-orm/dist/decorators/EsId';
+import { EsEntity, EsProperty, EsId } from 'elastic-orm';
 
 @EsEntity('elastic_index')
 export class MyEntity {
@@ -199,9 +195,7 @@ export class MyEntity {
 ### Additional Field Options
 For additional property options use parameter `additionalFieldOptions`. 
 ```typescript
-import { EsEntity } from 'elastic-orm/dist/decorators/EsEntity';
-import { EsProperty } from 'elastic-orm/dist/decorators/EsProperty';
-import { EsId } from 'elastic-orm/dist/decorators/EsId';
+import { EsEntity, EsProperty, EsId } from 'elastic-orm';
 
 @EsEntity('elastic_index')
 export class MyEntity {
@@ -240,7 +234,7 @@ export class MyEntity{}
 
 ### Update Mapping
 ```typescript
-import { FactoryProvider } from 'elastic-orm/dist/factory/Factory.provider';
+import { FactoryProvider } from 'elastic-orm';
 
 const mapping = FactoryProvider.makeSchemaManager().buildMapping(
   FactoryProvider.makeMetaLoader().getReflectMetaData(TestingNestedClass),

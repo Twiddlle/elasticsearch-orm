@@ -72,3 +72,4 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_REGISTRY_URL: registry.npmjs.org

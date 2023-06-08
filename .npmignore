@@ -1,6 +1,6 @@
 !dist
 !dist/*
-src
+/src
 test
 .idea/
 node_modules/

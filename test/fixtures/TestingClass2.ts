@@ -13,6 +13,7 @@ export class TestingClass {
     additionalFieldOptions: {
       coerce: true,
     },
+    name: 'foo_2',
   })
   public foo2: number;
 

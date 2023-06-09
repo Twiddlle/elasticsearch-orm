@@ -7,11 +7,11 @@ import {
   EsPropertyTypedOptions,
 } from '../types/EsPropertyOptions.intarface';
 import { ClassType } from '../types/Class.type';
-import {EsValidationException} from "../exceptions/EsValidationException";
+import { EsValidationException } from '../exceptions/EsValidationException';
 
 export function EsProperty(
   entity: ClassType<unknown>,
-  option2?: EsPropertyOptions,
+  option?: EsPropertyOptions,
 ): PropertyDecorator;
 
 export function EsProperty(options: EsNestedTypedOptions): PropertyDecorator;
@@ -32,6 +32,7 @@ export function EsProperty(
       entityPropName: name as string,
       type: 'unknown',
       additionalFieldOptions: {},
+      name: name as string,
     };
     let propertyOptions: EsPropertyFullOptions;
 

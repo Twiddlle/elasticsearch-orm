@@ -45,7 +45,7 @@ describe('entity transformer', () => {
   it('should transform entity of same class name from different file', () => {
     const normalizedEntity = entityTransformer.normalize(testingClass2);
     expect(normalizedEntity.id).toBe('doljgm4');
-    expect(normalizedEntity.data.foo2).toBe(2);
+    expect(normalizedEntity.data.foo_2).toBe(2);
     expect(normalizedEntity.data.bar2).toBe(true);
     expect(normalizedEntity.data.geoPoint2[0]).toBe(14);
     expect(normalizedEntity.data.geoPoint2[1]).toBe(15);

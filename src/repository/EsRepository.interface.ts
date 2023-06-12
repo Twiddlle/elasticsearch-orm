@@ -7,6 +7,7 @@ import {
   EsDeleteBulkResponseInterface,
   EsResponseInterface,
 } from './EsBulkResponseInterface';
+import { ClassType } from '../types/Class.type';
 
 export interface EsSearchParams<T, U = keyof T> {
   [key: string]: any;
@@ -71,4 +72,6 @@ export interface EsRepositoryInterface<Entity> {
   deleteIndex(): Promise<void>;
 
   updateMapping(mapping: EsMappingInterface): Promise<void>;
+
+  getEntity(): ClassType<Entity>;
 }

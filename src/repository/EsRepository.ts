@@ -20,8 +20,8 @@ import {
   EsDeleteBulkResponseInterface,
   EsResponseInterface,
 } from './EsBulkResponseInterface';
-import {TransportRequestOptions} from "@elastic/transport";
-import {SearchRequest} from "@elastic/elasticsearch/lib/api/types";
+import { TransportRequestOptions } from '@elastic/transport';
+import { SearchRequest } from '@elastic/elasticsearch/lib/api/types';
 
 export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
@@ -354,6 +354,10 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     } catch (e) {
       handleEsException(e);
     }
+  }
+
+  getEntity(): ClassType<Entity> {
+    return this.Entity;
   }
 
   private getIndex(entity: Entity, query?: EsQuery) {

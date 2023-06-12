@@ -48,7 +48,7 @@ export class SchemaManager {
             properties: this.buildMappingProperties(prop.props, meta),
           };
         } else {
-          mappingProperties[prop.options.entityPropName] = {
+          mappingProperties[prop.options.name] = {
             type: prop.options.type,
             ...prop.options.additionalFieldOptions,
           };

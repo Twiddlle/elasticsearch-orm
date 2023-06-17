@@ -216,6 +216,27 @@ describe('Repository.integration', () => {
     // expect((error.originalError).meta.statusCode).toBe(404);
   });
 
+  it('should delete by query', async () => {
+    const entity = new TestingClass();
+    entity.foo = 1;
+    entity.bar = true;
+    entity.geoPoint = [14, 15];
+    entity.createdAt = new Date('2022-04-01T00:00:00.000Z');
+    entity.updatedAt = [
+      new Date('2022-04-01T00:00:00.000Z'),
+      new Date('2022-04-02T00:00:00.000Z'),
+    ];
+    const { entity: createdEntity } = await repository.create(entity);
+    const res = await repository.deleteByQuery({
+      query: {
+        ids: {
+          values: [createdEntity.id],
+        },
+      },
+    });
+    expect(res).toBe(1);
+  });
+
   it('should create multiple entities', async () => {
     const entities = [
       Object.assign(new TestingClass(), { foo: 555 }),

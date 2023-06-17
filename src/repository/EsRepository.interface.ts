@@ -29,7 +29,8 @@ export type EsActionTypes =
   | 'findById'
   | 'createIndex'
   | 'deleteIndex'
-  | 'updateMapping';
+  | 'updateMapping'
+  | 'deleteByQuery';
 
 export type EsMiddlewareFunction = (
   action: EsActionTypes,
@@ -53,6 +54,8 @@ export interface EsRepositoryInterface<Entity> {
   delete(entity: Entity): Promise<true>;
 
   deleteMultiple(ids: string[]): Promise<EsDeleteBulkResponseInterface<Entity>>;
+
+  deleteByQuery(query: EsQuery<Entity>): Promise<number>;
 
   findOne(
     query: EsQuery<Entity>,

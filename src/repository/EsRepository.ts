@@ -21,7 +21,10 @@ import {
   EsResponseInterface,
 } from './EsBulkResponseInterface';
 import { TransportRequestOptions } from '@elastic/transport';
-import { SearchRequest } from '@elastic/elasticsearch/lib/api/types';
+import {
+  DeleteByQueryRequest,
+  SearchRequest,
+} from '@elastic/elasticsearch/lib/api/types';
 
 export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   private readonly metaLoader = FactoryProvider.makeMetaLoader();
@@ -142,6 +145,22 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
         raw: bulkRes,
         hasErrors: !!bulkRes.errors,
       };
+    } catch (e) {
+      handleEsException(e);
+    }
+  }
+
+  async deleteByQuery(query: EsQuery<Entity>) {
+    try {
+      const esParams: DeleteByQueryRequest = Object.assign({
+        index: this.metaLoader.getIndex(this.Entity, query as any),
+        body: query,
+      });
+
+      this.triggerBeforeRequest('deleteByQuery', esParams, [query]);
+      const res = await this.client.deleteByQuery(esParams);
+
+      return res?.deleted;
     } catch (e) {
       handleEsException(e);
     }

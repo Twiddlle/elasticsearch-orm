@@ -5,6 +5,7 @@ import {
   EsBulkResponseInterface,
   EsCollectionResponseInterface,
   EsDeleteBulkResponseInterface,
+  EsResponseDeleteByQueryInterface,
   EsResponseInterface,
 } from './EsBulkResponseInterface';
 import { ClassType } from '../types/Class.type';
@@ -53,9 +54,11 @@ export interface EsRepositoryInterface<Entity> {
 
   delete(entity: Entity): Promise<true>;
 
-  deleteMultiple(ids: string[]): Promise<EsDeleteBulkResponseInterface<Entity>>;
+  deleteMultiple(ids: string[]): Promise<EsDeleteBulkResponseInterface>;
 
-  deleteByQuery(query: EsQuery<Entity>): Promise<number>;
+  deleteByQuery(
+    query: EsQuery<Entity>,
+  ): Promise<EsResponseDeleteByQueryInterface>;
 
   findOne(
     query: EsQuery<Entity>,

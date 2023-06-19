@@ -115,7 +115,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
   async deleteMultiple(
     ids: string[],
     params: Partial<TransportRequestOptions> = {},
-  ): Promise<EsDeleteBulkResponseInterface<Entity>> {
+  ): Promise<EsDeleteBulkResponseInterface> {
     const bulkRequestBody = [];
     const index = this.metaLoader.getIndex(this.Entity);
 
@@ -160,7 +160,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       this.triggerBeforeRequest('deleteByQuery', esParams, [query]);
       const res = await this.client.deleteByQuery(esParams);
 
-      return res?.deleted;
+      return { deleted: res?.deleted, raw: res };
     } catch (e) {
       handleEsException(e);
     }

@@ -234,7 +234,8 @@ describe('Repository.integration', () => {
         },
       },
     });
-    expect(res).toBe(1);
+    expect(res.deleted).toBe(1);
+    expect(res.raw.deleted).toBe(1);
   });
 
   it('should create multiple entities', async () => {

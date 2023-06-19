@@ -4,13 +4,18 @@ export interface EsBulkResponseInterface<T> {
   hasErrors: boolean;
 }
 
-export interface EsDeleteBulkResponseInterface<T> {
+export interface EsDeleteBulkResponseInterface {
   raw: any;
   hasErrors: boolean;
 }
 
 export interface EsResponseInterface<T> {
   entity: T;
+  raw: any;
+}
+
+export interface EsResponseDeleteByQueryInterface {
+  deleted: number;
   raw: any;
 }
 

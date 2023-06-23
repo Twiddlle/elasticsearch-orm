@@ -9,15 +9,9 @@
 ElasticORM is an ORM tool that can run in javascript and helps developers
 to define a mapping of entities in one place by using decorators.
 
----
-**NOTE**
-
-This is the very early release of this library. New features will be added soon.
-
----
-
 ## Installation
-```shell
+Install [package](https://www.npmjs.com/package/elastic-orm) from npm.
+```bash
 npm i elastic-orm @elastic/elasticsearch
 ```
 

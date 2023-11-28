@@ -379,7 +379,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
     return this.Entity;
   }
 
-  private getIndex(entity: Entity, query?: EsQuery) {
+  public getIndex(entity: Entity | ClassType<Entity>, query?: EsQuery) {
     return this.metaLoader.getIndex(entity, query);
   }
 

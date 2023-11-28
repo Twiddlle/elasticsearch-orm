@@ -80,4 +80,6 @@ export interface EsRepositoryInterface<Entity> {
   updateMapping(mapping: EsMappingInterface): Promise<void>;
 
   getEntity(): ClassType<Entity>;
+
+  getIndex(entity: Entity | ClassType<Entity>, query?: EsQuery): string;
 }

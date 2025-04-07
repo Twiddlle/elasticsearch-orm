@@ -26,6 +26,8 @@ jobs:
           patchAll: true
 
       - name: Push tag
+        with:
+          token: ${{ secrets.DEPLOY_TOKEN }}
         run: |
           git tag ${{ steps.version.outputs.nextStrict }}
           git push origin ${{ steps.version.outputs.nextStrict }}

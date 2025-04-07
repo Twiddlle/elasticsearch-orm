@@ -4,14 +4,12 @@ on:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
-    branches:
-      - main
 
 jobs:
 
   publish:
 
-    if: github.ref_type == 'tag'
+    if: github.ref_type == 'tag' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
 

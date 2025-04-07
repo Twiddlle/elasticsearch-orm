@@ -12,7 +12,7 @@ describe('EsException', () => {
   });
 
   // this happens in `makeEsException`
-  it('setting originalCause also sets cause', () => {
+  it('setting originalError also sets cause', () => {
     const wrapper = new EsException('wrapper');
     const original = new Error('original');
     wrapper.originalError = original;

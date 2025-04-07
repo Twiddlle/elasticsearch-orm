@@ -16,12 +16,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.DEPLOY_TOKEN }}
 
       - name: Get Next Version
         id: version
         uses: ietf-tools/semver-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         with:
           token: ${{ github.token }}
           branch: main

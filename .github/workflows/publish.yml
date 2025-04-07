@@ -11,7 +11,7 @@ jobs:
 
   publish:
 
-    if: github.ref_type == 'tag' && github.ref_name == 'main'
+    if: github.ref_type == 'tag' && github.ref_name == 'x'
     runs-on: ubuntu-latest
     steps:
 

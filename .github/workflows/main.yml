@@ -17,6 +17,7 @@ jobs:
         with:
           token: ${{ github.token }}
           branch: main
+          patchAll: true
 
       - name: Create Tag
         uses: negz/create-tag@v1

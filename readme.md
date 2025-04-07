@@ -2,7 +2,7 @@
 
 ![Package version](https://img.shields.io/npm/v/elastic-orm?label=version)
 ![Package downloads](https://img.shields.io/npm/dm/elastic-orm)
-![Package types definitions](https://github.com/Twiddlle/elasticsearch-orm//actions/workflows/main.yml/badge.svg)
+![Package types definitions](https://github.com/Twiddlle/elasticsearch-orm//actions/workflows/test.yml/badge.svg)
 ![Package types definitions](https://img.shields.io/github/issues-raw/Twiddlle/elasticsearch-orm)
 ![Top language](https://img.shields.io/github/languages/top/Twiddlle/elasticsearch-orm)
 

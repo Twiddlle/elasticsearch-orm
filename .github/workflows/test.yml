@@ -1,0 +1,20 @@
+name: Test
+
+on:
+  pull_request:
+    types:
+      [ 'opened', 'synchronize' ]
+    branches:
+      [ 'main', 'production' ]
+
+  push:
+    branches:
+      [ 'main', 'production' ]
+    paths-ignore:
+      - "**.md"
+      - "**.yml"
+
+jobs:
+  test:
+    uses: ./.github/workflows/test_base.yml
+    secrets: inherit

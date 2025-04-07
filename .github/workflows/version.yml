@@ -1,0 +1,31 @@
+name: Make version
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  test:
+    uses: ./.github/workflows/test_base.yml
+    secrets: inherit
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Get Next Version
+        id: version
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          branch: main
+          patchAll: true
+
+      - name: Push tag
+        run: |
+          git tag ${{ steps.version.outputs.nextStrict }}
+          git push origin ${{ steps.version.outputs.nextStrict }}

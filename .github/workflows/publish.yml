@@ -11,8 +11,7 @@ jobs:
 
   publish:
 
-#add regex for semver
-    if: github.ref_type == 'tag' && github.ref_name == 'main' && matches(github.ref_name, '^\d+\.\d+\.\d+$')
+    if: github.ref_type == 'tag' && github.ref_name == 'main'
     runs-on: ubuntu-latest
     steps:
 

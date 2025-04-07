@@ -20,14 +20,14 @@ jobs:
       - name: Get Next Version
         id: version
         uses: ietf-tools/semver-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         with:
           token: ${{ github.token }}
           branch: main
           patchAll: true
 
       - name: Push tag
-        with:
-          token: ${{ secrets.DEPLOY_TOKEN }}
         run: |
           git tag ${{ steps.version.outputs.nextStrict }}
           git push origin ${{ steps.version.outputs.nextStrict }}

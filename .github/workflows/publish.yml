@@ -11,15 +11,29 @@ jobs:
 
   publish:
 
-    if: github.ref_type == 'tag' && github.ref_name == 'x'
+    # if: github.ref_type == 'tag' && github.ref_name == 'x'
     runs-on: ubuntu-latest
     steps:
 
 
       - uses: actions/checkout@v3
       - run: |
+          echo "${{ github.ref_type }}"
+          echo "${{ github.ref_name }}"
+          echo "${{ github.ref }}"
+          echo "${{ github.event_name }}"
+          echo "${{ github.event.ref }}"
           sed -i "s/0.0.0/${{ github.ref_name }}/" package.json
           cat package.json
+
+      # check tag shape
+      - run: |
+          if "${{ github.ref_name }}" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' > /dev/null; then
+            echo "Tag is valid"
+          else
+            echo "Tag is not valid"
+            exit 1
+          fi
 
 
       - uses: actions/setup-node@v3

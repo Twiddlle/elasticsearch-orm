@@ -1,0 +1,34 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      [ '\d+\.\d+\.\d+' ]
+    branches:
+      - main
+
+jobs:
+
+  publish:
+
+    if: github.ref_type == 'tag' && github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    steps:
+
+
+      - uses: actions/checkout@v3
+      - run: |
+          sed -i "s/0.0.0/${{ github.ref_name }}/" package.json
+          cat package.json
+
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm i
+      - run: npm run build
+      - run: cp ./.github/.npmrc .npmrc
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

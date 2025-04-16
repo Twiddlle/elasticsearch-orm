@@ -16,8 +16,8 @@ export class MyRootEntity {
   public foo: number;
 
   @EsProperty({ type: 'nested', entity: MyNestedEntity })
-  public nestedItem: MyNestedEntity;
+  public nestedItem?: MyNestedEntity;
 
   @EsProperty({ type: 'nested', entity: MyNestedEntity })
-  public nestedItems: MyNestedEntity[];
+  public nestedItems?: MyNestedEntity[];
 }

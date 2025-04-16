@@ -130,7 +130,22 @@ describe('entity transformer', () => {
       normalizedEntity,
     );
 
+    // clean the expected object because
+    // denormalize is coming back from DB on a new instance
+    // so it can't know what erroneous `undefined`s were in the original
+    for (const [k, v] of Object.entries(testingClass1)) {
+      if (v === undefined) {
+        delete testingClass1[k];
+      }
+    }
+
     expect(denormalizedEntity).toMatchObject(testingClass1);
+
+    for (const [k, v] of Object.entries(normalizedEntity.data)) {
+      if (v === undefined) {
+        delete normalizedEntity.data[k];
+      }
+    }
 
     const normalizedEntityRetried =
       entityTransformer.normalize(denormalizedEntity);

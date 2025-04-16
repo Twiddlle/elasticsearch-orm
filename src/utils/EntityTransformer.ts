@@ -47,13 +47,6 @@ export class EntityTransformer {
       });
     }
 
-    // avoids edge case where some consumers populate missing fields with undefined
-    for (const [k, v] of Object.entries(entity)) {
-      if (v === undefined) {
-        delete entity[k];
-      }
-    }
-
     const dbEntityData: Record<string, unknown> = {};
     for (const prop of props) {
       // eslint-disable-next-line no-prototype-builtins
@@ -61,14 +54,15 @@ export class EntityTransformer {
         continue;
       }
 
-      if (prop.isNested) {
+      const value = entity[prop.options.entityPropName];
+      if (prop.isNested && value !== undefined && value !== null) {
         dbEntityData[prop.options.name] = this.normalizeProps(
-          entity[prop.options.entityPropName],
+          value,
           prop.props,
           meta,
         );
       } else {
-        dbEntityData[prop.options.name] = entity[prop.options.entityPropName];
+        dbEntityData[prop.options.name] = value;
       }
     }
     return dbEntityData;

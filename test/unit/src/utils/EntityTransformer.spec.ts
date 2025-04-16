@@ -110,14 +110,24 @@ describe('entity transformer', () => {
     expect(normalizedEntityRetried).toMatchObject(normalizedEntity);
   });
 
-  it('should work for nested entities - edge case: optional field set to undefined', () => {
+  it('should work for nested entities - optional fields', () => {
     const testingClass1 = new MyRootEntity();
     testingClass1.id = '25u46fhno';
     testingClass1.foo = 1;
-    Object.assign(testingClass1, {
-      nestedItem: undefined,
-      nestedItems: undefined,
-    });
+
+    // remove block in the future
+    // see: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#the-usedefineforclassfields-flag-and-the-declare-property-modifier
+    {
+      const recentTsTarget = Object.keys(testingClass1).includes('nestedItem');
+      if (!recentTsTarget) {
+        console.debug('older TS target');
+        // make test object look like what newer TS targets generate
+        Object.assign(testingClass1, {
+          nestedItem: undefined,
+          nestedItems: undefined,
+        });
+      }
+    }
 
     const normalizedEntity = entityTransformer.normalize(testingClass1);
     expect(normalizedEntity.id).toBe('25u46fhno');
@@ -130,9 +140,7 @@ describe('entity transformer', () => {
       normalizedEntity,
     );
 
-    // clean the expected object because
-    // denormalize is coming back from DB on a new instance
-    // so it can't know what erroneous `undefined`s were in the original
+    // remove in future, clean the expected object in-case undefined affects properties
     for (const [k, v] of Object.entries(testingClass1)) {
       if (v === undefined) {
         delete testingClass1[k];
@@ -141,6 +149,7 @@ describe('entity transformer', () => {
 
     expect(denormalizedEntity).toMatchObject(testingClass1);
 
+    // remove in future
     for (const [k, v] of Object.entries(normalizedEntity.data)) {
       if (v === undefined) {
         delete normalizedEntity.data[k];

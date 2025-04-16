@@ -1,12 +1,12 @@
-import { MetaLoader } from './MetaLoader';
-import { ClassType } from '../types/Class.type';
 import { NormalizedEntity } from '../entity/Normalized.entity';
+import { EsValidationException } from '../exceptions/EsValidationException';
+import { ClassType } from '../types/Class.type';
 import {
   EsMetaDataInterface,
   EsPropsMetaDataInterface,
 } from '../types/EsMetaData.interface';
-import { EsValidationException } from '../exceptions/EsValidationException';
 import { EsPropertyTypedOptions } from '../types/EsPropertyOptions.intarface';
+import { MetaLoader } from './MetaLoader';
 
 export class EntityTransformer {
   constructor(private readonly metaLoader: MetaLoader) {}
@@ -45,6 +45,13 @@ export class EntityTransformer {
       return entity.map((entityItem) => {
         return this.normalizeProps(entityItem, props, meta);
       });
+    }
+
+    // avoids edge case where some consumers populate missing fields with undefined
+    for (const [k, v] of Object.entries(entity)) {
+      if (v === undefined) {
+        delete entity[k];
+      }
     }
 
     const dbEntityData: Record<string, unknown> = {};

@@ -1,8 +1,12 @@
+import { FactoryProvider } from '../../../../src/factory/Factory.provider';
+import { EntityTransformer } from '../../../../src/utils/EntityTransformer';
+import { CustomIdGeneratorEntity } from '../../../fixtures/CustomIdGeneratorEntity';
 import { TestingClass } from '../../../fixtures/TestingClass';
 import { TestingClass as TestingClass2 } from '../../../fixtures/TestingClass2';
-import { EntityTransformer } from '../../../../src/utils/EntityTransformer';
-import { FactoryProvider } from '../../../../src/factory/Factory.provider';
-import { CustomIdGeneratorEntity } from '../../../fixtures/CustomIdGeneratorEntity';
+import {
+  MyNestedEntity,
+  MyRootEntity,
+} from '../../../fixtures/TestingClassNested';
 
 describe('entity transformer', () => {
   let entityTransformer: EntityTransformer;
@@ -67,5 +71,69 @@ describe('entity transformer', () => {
     const normalizedEntity = entityTransformer.normalize(entity);
 
     expect(normalizedEntity.id).toBe('myCustomId');
+  });
+
+  it('should work for nested entities', () => {
+    const testingClass1 = new MyRootEntity();
+    testingClass1.id = '25u46fhno';
+    testingClass1.foo = 1;
+    {
+      const nestedClass = new MyNestedEntity();
+      nestedClass.name = 'name';
+      testingClass1.nestedItem = nestedClass;
+    }
+    {
+      const nestedClass = new MyNestedEntity();
+      nestedClass.name = 'name-array';
+      testingClass1.nestedItems = [nestedClass];
+    }
+
+    const normalizedEntity = entityTransformer.normalize(testingClass1);
+    expect(normalizedEntity.id).toBe('25u46fhno');
+    expect(normalizedEntity.data.foo).toBe(1);
+    expect(normalizedEntity.data.nestedItem).toEqual({ name: 'name' });
+    expect(normalizedEntity.data.nestedItems).toEqual([
+      {
+        name: 'name-array',
+      },
+    ]);
+
+    const denormalizedEntity = entityTransformer.denormalize(
+      MyRootEntity,
+      normalizedEntity,
+    );
+
+    expect(denormalizedEntity).toMatchObject(testingClass1);
+
+    const normalizedEntityRetried =
+      entityTransformer.normalize(denormalizedEntity);
+    expect(normalizedEntityRetried).toMatchObject(normalizedEntity);
+  });
+
+  it('should work for nested entities - edge case: optional field set to undefined', () => {
+    const testingClass1 = new MyRootEntity();
+    testingClass1.id = '25u46fhno';
+    testingClass1.foo = 1;
+    Object.assign(testingClass1, {
+      nestedItem: undefined,
+      nestedItems: undefined,
+    });
+
+    const normalizedEntity = entityTransformer.normalize(testingClass1);
+    expect(normalizedEntity.id).toBe('25u46fhno');
+    expect(normalizedEntity.data.foo).toBe(1);
+    expect(normalizedEntity.data.nestedItem).toBeUndefined();
+    expect(normalizedEntity.data.nestedItems).toBeUndefined();
+
+    const denormalizedEntity = entityTransformer.denormalize(
+      MyRootEntity,
+      normalizedEntity,
+    );
+
+    expect(denormalizedEntity).toMatchObject(testingClass1);
+
+    const normalizedEntityRetried =
+      entityTransformer.normalize(denormalizedEntity);
+    expect(normalizedEntityRetried).toMatchObject(normalizedEntity);
   });
 });

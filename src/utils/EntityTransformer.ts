@@ -41,6 +41,10 @@ export class EntityTransformer {
     props: EsPropsMetaDataInterface[],
     meta: EsMetaDataInterface,
   ) {
+    if (!entity) {
+      return undefined;
+    }
+
     if (entity instanceof Array) {
       return entity.map((entityItem) => {
         return this.normalizeProps(entityItem, props, meta);

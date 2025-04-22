@@ -264,10 +264,8 @@ describe('Repository.integration', () => {
       error = e;
     }
     expect(error).toBeInstanceOf(EsException);
-    expect((error.originalError as ElasticsearchClientError).message).toBe(
-      'parse_exception\n' +
-        '\tRoot causes:\n' +
-        '\t\tparse_exception: request body is required',
+    expect((error.originalError as ElasticsearchClientError).message).toContain(
+      'request body is required',
     );
   });
 

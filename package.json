@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/Twiddlle/elasticsearch-orm#readme",
   "devDependencies": {
-    "@elastic/elasticsearch": "^8.7.0",
+    "@elastic/elasticsearch": "^9.0.0",
     "@types/dotenv": "^8.2.0",
     "@types/jest": "^27.4.1",
     "@types/lorem-ipsum": "^2.0.0",
@@ -54,14 +54,16 @@
     "reflect-metadata": "^0.2.2"
   },
   "peerDependencies": {
-    "@elastic/elasticsearch": "^7.0.0 || ^8.0.0"
+    "@elastic/elasticsearch": "^8.0.0 || ^9.0.0"
   },
   "jest": {
     "moduleFileExtensions": [
       "js",
       "ts"
     ],
-    "setupFiles": ["<rootDir>/test/setup.ts"],
+    "setupFiles": [
+      "<rootDir>/test/setup.ts"
+    ],
     "rootDir": ".",
     "testEnvironment": "node",
     "testRegex": "\\.(integration|spec|performance)\\.ts$",

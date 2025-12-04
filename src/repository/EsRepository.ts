@@ -256,7 +256,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
           index: this.getIndex(entity),
           id: dbEntity.id,
           refresh: this.getRefreshOption(entity),
-          body: { doc: dbEntity.data },
+          doc: dbEntity.data,
         },
         params,
       );
@@ -324,7 +324,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       const esParams = Object.assign(
         {
           index: this.metaLoader.getIndex(this.Entity),
-          body: indexInterface,
+          ...indexInterface,
         },
         params,
       );
@@ -363,7 +363,7 @@ export class EsRepository<Entity> implements EsRepositoryInterface<Entity> {
       const esParams = Object.assign(
         {
           index: this.metaLoader.getIndex(this.Entity),
-          body: mapping,
+          ...mapping,
         },
         params,
       );
